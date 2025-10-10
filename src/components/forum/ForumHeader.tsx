@@ -51,8 +51,8 @@ const ForumHeader: React.FC<ForumHeaderProps> = ({ onSearch, onNewPost }) => {
     <div className="mb-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-green-800">Community Forum</h1>
-          <p className="text-green-600 mt-1">Share and learn from fellow Eco-Enthusiasts</p>
+          <h1 className="text-3xl font-bold text-green-800">Plant Community Forum</h1>
+          <p className="text-green-600 mt-1">Share knowledge about carbon sequestration, urban gardening, and reforestation</p>
         </div>
         
         <Button 
@@ -76,9 +76,9 @@ const ForumHeader: React.FC<ForumHeaderProps> = ({ onSearch, onNewPost }) => {
       
       <div className="relative">
         <Search className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
-        <Input 
+        <Input
           className="pl-10 bg-white/90 border-green-100 focus-visible:ring-green-500"
-          placeholder="Search forum posts..."
+          placeholder="Search plant discussions, carbon sequestration, gardening tips..."
           onChange={(e) => onSearch(e.target.value)}
         />
       </div>

@@ -23,7 +23,7 @@ export interface ForumComment {
   likes: number;
 }
 
-export type ForumCategory = 'all' | 'disease' | 'prevention' | 'treatment' | 'techniques' | 'questions';
+export type ForumCategory = 'all' | 'carbon-sequestration' | 'urban-gardening' | 'reforestation' | 'growing-techniques' | 'care-tips' | 'plant-identification' | 'conservation' | 'community-projects';
 
 export interface NewPostData {
   title: string;

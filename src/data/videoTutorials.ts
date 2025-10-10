@@ -1,155 +1,154 @@
-
 import { VideoTutorial } from "@/types/video";
 
 export const videoTutorials: VideoTutorial[] = [
   {
     id: "v1",
-    title: "Plant Disease Identification Guide",
-    description: "Learn how to identify common plant diseases affecting crops. Comprehensive guide covering symptoms, causes, and early detection methods.",
-    thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
-    youtubeId: "dQw4w9WgXcQ",
-    duration: "12:45",
+    title: "Sustainable Urban Gardening Techniques",
+    description: "Learn how to create beautiful urban gardens that support UNSDG 11 (Sustainable Cities) and UNSDG 15 (Life on Land). Complete guide to space-efficient gardening in urban environments.",
+    thumbnail: "https://img.youtube.com/vi/2kW-S1oWz9U/hqdefault.jpg",
+    youtubeId: "2kW-S1oWz9U",
+    duration: "15:30",
     views: "125k",
-    category: "disease",
+    category: "plants",
     instructor: {
-      name: "Dr. Sarah Thompson",
+      name: "Dr. Sarah Green",
       avatar: "/placeholder.svg",
-      initials: "ST"
+      initials: "SG"
     }
   },
   {
     id: "v2",
-    title: "Organic Pest Control Methods",
-    description: "Sustainable and organic approaches to pest management. Learn natural methods to protect your crops without harmful chemicals.",
-    thumbnail: "https://img.youtube.com/vi/9bZkp7q19f0/hqdefault.jpg",
-    youtubeId: "9bZkp7q19f0",
-    duration: "18:30",
+    title: "Native Plant Landscaping for Biodiversity",
+    description: "Create landscapes that support local ecosystems and promote biodiversity. Learn about native plant species that attract pollinators and support UNSDG 15 (Life on Land).",
+    thumbnail: "https://img.youtube.com/vi/mX5u6hZ9aKs/hqdefault.jpg",
+    youtubeId: "mX5u6hZ9aKs",
+    duration: "22:45",
     views: "89k",
-    category: "prevention",
+    category: "landscaping",
     instructor: {
-      name: "John Martinez",
+      name: "John Meadow",
       avatar: "/placeholder.svg",
       initials: "JM"
     }
   },
   {
     id: "v3",
-    title: "Soil Health and Crop Nutrition",
-    description: "Understanding soil composition, pH levels, and nutrient management for optimal crop growth and disease resistance.",
-    thumbnail: "https://img.youtube.com/vi/JGwWNGJdvx8/hqdefault.jpg",
-    youtubeId: "JGwWNGJdvx8",
-    duration: "25:12",
-    views: "67k",
-    category: "techniques",
+    title: "Carbon Sequestration Through Tree Planting",
+    description: "Understanding how trees and plants capture CO2 to combat climate change. Learn about reforestation strategies that support UNSDG 13 (Climate Action) and UNSDG 15.",
+    thumbnail: "https://img.youtube.com/vi/7a7UslgR7hE/hqdefault.jpg",
+    youtubeId: "7a7UslgR7hE",
+    duration: "28:12",
+    views: "156k",
+    category: "plants",
     instructor: {
-      name: "Dr. Emily Chen",
+      name: "Dr. Emily Forest",
       avatar: "/placeholder.svg",
-      initials: "EC"
+      initials: "EF"
     }
   },
   {
     id: "v4",
-    title: "Fungal Disease Treatment Strategies",
-    description: "Effective treatment methods for common fungal infections in crops. Step-by-step guide to application and prevention.",
-    thumbnail: "https://img.youtube.com/vi/QDYfEBY9NM4/hqdefault.jpg",
-    youtubeId: "QDYfEBY9NM4",
-    duration: "16:45",
-    views: "143k",
-    category: "treatment",
+    title: "Edible Forest Gardens Design",
+    description: "Create sustainable food forests that mimic natural ecosystems. Learn permaculture principles for designing landscapes that provide food while supporting biodiversity.",
+    thumbnail: "https://img.youtube.com/vi/5L9s_9P2bY0/hqdefault.jpg",
+    youtubeId: "5L9s_9P2bY0",
+    duration: "24:18",
+    views: "203k",
+    category: "landscaping",
     instructor: {
-      name: "Michael Roberts",
+      name: "Michael Garden",
       avatar: "/placeholder.svg",
-      initials: "MR"
+      initials: "MG"
     }
   },
   {
     id: "v5",
-    title: "Integrated Pest Management (IPM)",
-    description: "Comprehensive approach to pest control combining biological, cultural, and chemical methods for sustainable farming.",
-    thumbnail: "https://img.youtube.com/vi/astISOttCQ0/hqdefault.jpg",
-    youtubeId: "astISOttCQ0",
-    duration: "22:18",
-    views: "92k",
-    category: "prevention",
+    title: "NFTs for Environmental Conservation",
+    description: "How blockchain technology and NFTs are being used to support environmental initiatives. Learn about digital assets funding reforestation and conservation projects aligned with UNSDG 15.",
+    thumbnail: "https://img.youtube.com/vi/8ROR2a2UWjQ/hqdefault.jpg",
+    youtubeId: "8ROR2a2UWjQ",
+    duration: "19:30",
+    views: "178k",
+    category: "nft",
     instructor: {
-      name: "Dr. Lisa Williams",
+      name: "Dr. Lisa Tech",
       avatar: "/placeholder.svg",
-      initials: "LW"
+      initials: "LT"
     }
   },
   {
     id: "v6",
-    title: "Crop Rotation and Disease Prevention",
-    description: "How proper crop rotation can prevent soil-borne diseases and improve overall farm productivity and soil health.",
-    thumbnail: "https://img.youtube.com/vi/lXMskKTw3Bc/hqdefault.jpg",
-    youtubeId: "lXMskKTw3Bc",
-    duration: "14:56",
-    views: "78k",
-    category: "prevention",
+    title: "Drought-Resistant Plant Selection",
+    description: "Choose plants that thrive in water-scarce conditions to support UNSDG 6 (Clean Water) and UNSDG 15. Learn about xeriscaping principles and water-wise gardening.",
+    thumbnail: "https://img.youtube.com/vi/3iF5yI6_2x8/hqdefault.jpg",
+    youtubeId: "3iF5yI6_2x8",
+    duration: "17:25",
+    views: "92k",
+    category: "plants",
     instructor: {
-      name: "James Anderson",
+      name: "James River",
       avatar: "/placeholder.svg",
-      initials: "JA"
+      initials: "JR"
     }
   },
   {
     id: "v7",
-    title: "Water Management for Healthy Crops",
-    description: "Proper irrigation techniques and water management strategies to prevent waterlogged soils and fungal diseases.",
-    thumbnail: "https://img.youtube.com/vi/kJQP7kiw5Fk/hqdefault.jpg",
-    youtubeId: "kJQP7kiw5Fk",
-    duration: "19:32",
-    views: "56k",
-    category: "techniques",
+    title: "Vertical Gardening for Small Spaces",
+    description: "Maximize your growing space with vertical gardening techniques. Perfect for urban environments and small balconies while supporting sustainable living practices.",
+    thumbnail: "https://img.youtube.com/vi/YBkHz2gQgOQ/hqdefault.jpg",
+    youtubeId: "YBkHz2gQgOQ",
+    duration: "21:40",
+    views: "134k",
+    category: "landscaping",
     instructor: {
-      name: "Maria Rodriguez",
+      name: "Maria Urban",
       avatar: "/placeholder.svg",
-      initials: "MR"
+      initials: "MU"
     }
   },
   {
     id: "v8",
-    title: "Bacterial Disease Recognition",
-    description: "Identifying and treating bacterial infections in plants. Learn the key symptoms and effective treatment protocols.",
-    thumbnail: "https://img.youtube.com/vi/7LGTEI1RMoQ/hqdefault.jpg",
-    youtubeId: "7LGTEI1RMoQ",
-    duration: "13:27",
-    views: "34k",
-    category: "disease",
+    title: "Planting for Pollinator Conservation",
+    description: "Create gardens that support bees, butterflies, and other essential pollinators. Learn about specific plant species that help reverse pollinator decline.",
+    thumbnail: "https://img.youtube.com/vi/Rq2A8p7e5o0/hqdefault.jpg",
+    youtubeId: "Rq2A8p7e5o0",
+    duration: "16:15",
+    views: "87k",
+    category: "plants",
     instructor: {
-      name: "Dr. Ahmed Hassan",
+      name: "Dr. Ahmed Bloom",
       avatar: "/placeholder.svg",
-      initials: "AH"
+      initials: "AB"
     }
   },
   {
     id: "v9",
-    title: "Greenhouse Disease Management",
-    description: "Special considerations for disease prevention and treatment in controlled environment agriculture and greenhouses.",
-    thumbnail: "https://img.youtube.com/vi/Sagg08DrO5U/hqdefault.jpg",
-    youtubeId: "Sagg08DrO5U",
-    duration: "21:43",
-    views: "45k",
-    category: "treatment",
+    title: "NFT-Backed Reforestation Projects",
+    description: "Explore how NFT technology is funding large-scale reforestation efforts. Learn about digital collectibles that directly contribute to forest restoration and carbon offsetting.",
+    thumbnail: "https://img.youtube.com/vi/4Y7t6R1gZQY/hqdefault.jpg",
+    youtubeId: "4Y7t6R1gZQY",
+    duration: "25:50",
+    views: "145k",
+    category: "nft",
     instructor: {
-      name: "Susan Park",
+      name: "Susan Crypto",
       avatar: "/placeholder.svg",
-      initials: "SP"
+      initials: "SC"
     }
   },
   {
     id: "v10",
-    title: "Companion Planting for Disease Control",
-    description: "Using companion plants to naturally reduce disease pressure and improve crop health through biodiversity.",
-    thumbnail: "https://img.youtube.com/vi/uHKfrz65KSU/hqdefault.jpg",
-    youtubeId: "uHKfrz65KSU",
-    duration: "17:09",
-    views: "62k",
-    category: "techniques",
+    title: "Rain Gardens for Water Management",
+    description: "Design beautiful landscapes that naturally manage stormwater runoff. Learn about creating gardens that filter water while supporting local ecosystems and UNSDG 6.",
+    thumbnail: "https://img.youtube.com/vi/6b5zZ8pW7v8/hqdefault.jpg",
+    youtubeId: "6b5zZ8pW7v8",
+    duration: "20:35",
+    views: "76k",
+    category: "landscaping",
     instructor: {
-      name: "Robert Taylor",
+      name: "Robert Eco",
       avatar: "/placeholder.svg",
-      initials: "RT"
+      initials: "RE"
     }
   }
 ];

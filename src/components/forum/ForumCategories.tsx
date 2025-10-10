@@ -14,11 +14,14 @@ const ForumCategories: React.FC<ForumCategoriesProps> = ({
 }) => {
   const categories: { value: ForumCategory; label: string }[] = [
     { value: 'all', label: 'All Topics' },
-    { value: 'disease', label: 'Disease Identification' },
-    { value: 'prevention', label: 'Prevention' },
-    { value: 'treatment', label: 'Treatment' },
-    { value: 'techniques', label: 'Growing Techniques' },
-    { value: 'questions', label: 'Questions' },
+    { value: 'carbon-sequestration', label: 'Carbon Sequestration' },
+    { value: 'urban-gardening', label: 'Urban Gardening' },
+    { value: 'reforestation', label: 'Reforestation' },
+    { value: 'growing-techniques', label: 'Growing Techniques' },
+    { value: 'care-tips', label: 'Care Tips' },
+    { value: 'plant-identification', label: 'Plant Identification' },
+    { value: 'conservation', label: 'Conservation' },
+    { value: 'community-projects', label: 'Community Projects' },
   ];
 
   return (

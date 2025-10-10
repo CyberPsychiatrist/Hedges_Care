@@ -1,36 +1,35 @@
 // Enhanced AI scanning service with realistic processing simulation
-export interface PlantDiseaseData {
+export interface PlantData {
   id: string;
-  name: string;
-  scientificName?: string;
+  species_name: string;
+  common_name: string;
+  plant_type: string;
   description: string;
-  symptoms: string[];
-  causes: string[];
-  treatment: string;
-  prevention: string[];
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  affectedCrops: string[];
-  seasonalRisk: {
-    spring: number;
-    summer: number;
-    fall: number;
-    winter: number;
+  environmental_benefits: string;
+  landscaping_tips: string;
+  co2_absorption: {
+    daily: number;
+    annual: number;
+    impact: string;
   };
-  confidenceFactors: {
-    imageQuality: number;
-    symptomClarity: number;
-    plantCondition: number;
+  growth_conditions: {
+    height_m: number;
+    canopy_m2: number;
+    optimal_temp: number;
+    rainfall_mm: number;
+    soil_type: string;
   };
+  confidence: number;
 }
 
 export interface AIAnalysisResult {
-  disease: PlantDiseaseData;
+  plant: PlantData;
   confidence: number;
   certainty: 'very_low' | 'low' | 'medium' | 'high' | 'very_high';
   processingTime: number;
   imageQualityScore: number;
   alternativeDiagnoses?: Array<{
-    disease: string;
+    species: string;
     confidence: number;
   }>;
   recommendations: {
@@ -40,192 +39,117 @@ export interface AIAnalysisResult {
   };
 }
 
-// Comprehensive disease database with realistic data
-const PLANT_DISEASES: PlantDiseaseData[] = [
+// Comprehensive plant database with data from global dataset
+const PLANTS: PlantData[] = [
   {
-    id: 'tomato-late-blight',
-    name: 'Tomato Late Blight',
-    scientificName: 'Phytophthora infestans',
-    description: 'A devastating fungal disease that causes dark, water-soaked lesions on leaves, stems, and fruits. Can destroy entire crops within days under favorable conditions.',
-    symptoms: [
-      'Dark brown lesions on leaves with pale green borders',
-      'White fungal growth on leaf undersides in humid conditions',
-      'Dark, greasy-looking lesions on stems and fruits',
-      'Rapid yellowing and death of affected leaves'
-    ],
-    causes: [
-      'High humidity (>85%)',
-      'Cool temperatures (15-20°C)',
-      'Poor air circulation',
-      'Overhead watering',
-      'Dense plant spacing'
-    ],
-    treatment: 'Apply copper-based fungicide immediately. Remove and destroy all infected plant parts. Improve air circulation and avoid overhead watering. Consider systemic fungicides for severe infections.',
-    prevention: [
-      'Choose resistant tomato varieties',
-      'Ensure proper plant spacing',
-      'Water at soil level',
-      'Apply preventive copper sprays',
-      'Rotate crops annually'
-    ],
-    severity: 'critical',
-    affectedCrops: ['tomatoes', 'potatoes', 'peppers', 'eggplants'],
-    seasonalRisk: { spring: 0.3, summer: 0.7, fall: 0.9, winter: 0.1 },
-    confidenceFactors: { imageQuality: 0.9, symptomClarity: 0.95, plantCondition: 0.8 }
+    id: "R000001",
+    species_name: "Mangifera indica",
+    common_name: "Mango Tree",
+    plant_type: "tree",
+    description: "Tropical fruit tree known for its delicious fruits and excellent carbon sequestration capabilities. Native to South Asia, widely cultivated in tropical regions.",
+    environmental_benefits: "High CO2 absorption rate of 52.5 kg CO2 annually per healthy tree. Provides shade and improves air quality while supporting biodiversity.",
+    landscaping_tips: "Plant in full sun, well-draining soil. Space 15-20 feet apart. Regular watering during fruit development. Prune to maintain shape and size.",
+    co2_absorption: {
+      daily: 0.144,
+      annual: 52.5,
+      impact: "Equivalent to offsetting 1,825 km of car driving annually"
+    },
+    growth_conditions: {
+      height_m: 14.98,
+      canopy_m2: 61.162,
+      optimal_temp: 20.71,
+      rainfall_mm: 530.4,
+      soil_type: "Loam"
+    },
+    confidence: 0.95
   },
   {
-    id: 'powdery-mildew',
-    name: 'Powdery Mildew',
-    scientificName: 'Erysiphe cichoracearum',
-    description: 'A common fungal disease creating white, powdery patches on leaf surfaces. Thrives in warm, dry conditions with high humidity.',
-    symptoms: [
-      'White, powdery coating on leaves and stems',
-      'Yellowing and drying of infected leaves',
-      'Stunted growth and reduced yield',
-      'Distorted leaf shapes in severe cases'
-    ],
-    causes: [
-      'High humidity with dry conditions',
-      'Poor air circulation',
-      'Overcrowded plants',
-      'Moderate temperatures (20-25°C)',
-      'Low light conditions'
-    ],
-    treatment: 'Apply sulfur-based fungicide or neem oil. Remove affected leaves. Improve air circulation around plants. Use baking soda solution (1 tsp per quart water) as organic treatment.',
-    prevention: [
-      'Plant resistant varieties',
-      'Ensure proper spacing',
-      'Provide adequate sunlight',
-      'Apply preventive neem oil sprays',
-      'Maintain good garden hygiene'
-    ],
-    severity: 'medium',
-    affectedCrops: ['cucumbers', 'squash', 'melons', 'beans', 'peas'],
-    seasonalRisk: { spring: 0.4, summer: 0.8, fall: 0.6, winter: 0.2 },
-    confidenceFactors: { imageQuality: 0.85, symptomClarity: 0.9, plantCondition: 0.75 }
+    id: "R000002",
+    species_name: "Jacaranda mimosifolia",
+    common_name: "Jacaranda Tree",
+    plant_type: "tree",
+    description: "Beautiful ornamental tree with purple flowers. Excellent for urban landscaping and provides significant environmental benefits.",
+    environmental_benefits: "Absorbs 28.9 kg CO2 annually. Creates beautiful canopy cover and improves urban air quality while providing aesthetic value.",
+    landscaping_tips: "Prefers full sun and well-drained soil. Drought-tolerant once established. Perfect for streetscapes and large gardens.",
+    co2_absorption: {
+      daily: 0.079,
+      annual: 28.9,
+      impact: "Equivalent to offsetting 1,000 km of car driving annually"
+    },
+    growth_conditions: {
+      height_m: 17.685,
+      canopy_m2: 7.692,
+      optimal_temp: 10.16,
+      rainfall_mm: 335.9,
+      soil_type: "Sandy"
+    },
+    confidence: 0.92
   },
   {
-    id: 'aphid-infestation',
-    name: 'Aphid Infestation',
-    scientificName: 'Aphididae family',
-    description: 'Small, soft-bodied insects that feed on plant sap, causing stunted growth and transmitting viral diseases.',
-    symptoms: [
-      'Clusters of small green, black, or white insects',
-      'Curled, yellowed, or distorted leaves',
-      'Sticky honeydew secretion on leaves',
-      'Presence of sooty mold on honeydew'
-    ],
-    causes: [
-      'Warm weather conditions',
-      'Nitrogen-rich fertilizers',
-      'Lack of natural predators',
-      'Stressed or weakened plants',
-      'Indoor growing conditions'
-    ],
-    treatment: 'Spray with strong water stream to dislodge aphids. Apply insecticidal soap or neem oil. Introduce beneficial insects like ladybugs. Use systemic insecticides for severe infestations.',
-    prevention: [
-      'Encourage beneficial insects',
-      'Avoid over-fertilizing with nitrogen',
-      'Use reflective mulches',
-      'Plant companion plants like marigolds',
-      'Regular plant inspection'
-    ],
-    severity: 'medium',
-    affectedCrops: ['roses', 'vegetables', 'fruit trees', 'ornamental plants'],
-    seasonalRisk: { spring: 0.7, summer: 0.9, fall: 0.5, winter: 0.2 },
-    confidenceFactors: { imageQuality: 0.8, symptomClarity: 0.95, plantCondition: 0.9 }
+    id: "R000003",
+    species_name: "Delonix regia",
+    common_name: "Flame Tree",
+    plant_type: "tree",
+    description: "Striking ornamental tree with brilliant red-orange flowers. Fast-growing and excellent for carbon sequestration.",
+    environmental_benefits: "High absorption rate of 51.0 kg CO2 annually. Provides excellent shade and habitat for birds while sequestering carbon.",
+    landscaping_tips: "Plant in full sun, tolerates various soil types. Fast-growing, so provide adequate space. Beautiful flowering display in summer.",
+    co2_absorption: {
+      daily: 0.140,
+      annual: 51.0,
+      impact: "Equivalent to offsetting 1,860 km of car driving annually"
+    },
+    growth_conditions: {
+      height_m: 6.965,
+      canopy_m2: 42.891,
+      optimal_temp: 26.17,
+      rainfall_mm: 1377.9,
+      soil_type: "Peaty"
+    },
+    confidence: 0.94
   },
   {
-    id: 'bacterial-leaf-spot',
-    name: 'Bacterial Leaf Spot',
-    scientificName: 'Xanthomonas campestris',
-    description: 'A bacterial infection causing water-soaked spots that turn brown with yellow halos. Spreads rapidly in warm, wet conditions.',
-    symptoms: [
-      'Small, dark water-soaked spots on leaves',
-      'Spots enlarge and develop yellow halos',
-      'Infected leaves eventually dry up and fall',
-      'Lesions may appear on stems and fruits'
-    ],
-    causes: [
-      'Warm, wet weather',
-      'Overhead watering',
-      'Working with wet plants',
-      'Poor sanitation',
-      'Contaminated tools or seeds'
-    ],
-    treatment: 'Apply copper-based bactericide at first sign. Remove infected plant parts immediately. Avoid overhead watering. Sanitize tools between plants.',
-    prevention: [
-      'Use pathogen-free seeds',
-      'Drip irrigation instead of sprinklers',
-      'Crop rotation',
-      'Sanitize garden tools',
-      'Avoid working with wet plants'
-    ],
-    severity: 'high',
-    affectedCrops: ['tomatoes', 'peppers', 'beans', 'cucumbers'],
-    seasonalRisk: { spring: 0.4, summer: 0.8, fall: 0.6, winter: 0.1 },
-    confidenceFactors: { imageQuality: 0.75, symptomClarity: 0.8, plantCondition: 0.85 }
+    id: "R000009",
+    species_name: "Salix babylonica",
+    common_name: "Weeping Willow",
+    plant_type: "tree",
+    description: "Graceful tree with weeping branches. Excellent for water-logged areas and provides substantial environmental benefits.",
+    environmental_benefits: "Very high absorption rate of 29.0 kg CO2 annually. Excellent for soil stabilization and water filtration while sequestering carbon.",
+    landscaping_tips: "Thrives near water sources, tolerates wet soil. Plant away from foundations due to extensive root systems. Beautiful ornamental value.",
+    co2_absorption: {
+      daily: 0.079,
+      annual: 29.0,
+      impact: "Equivalent to offsetting 1,060 km of car driving annually"
+    },
+    growth_conditions: {
+      height_m: 35.116,
+      canopy_m2: 57.047,
+      optimal_temp: 19.58,
+      rainfall_mm: 884.1,
+      soil_type: "Silty"
+    },
+    confidence: 0.91
   },
   {
-    id: 'nitrogen-deficiency',
-    name: 'Nitrogen Deficiency',
-    description: 'Nutrient deficiency causing yellowing of older leaves first, stunted growth, and reduced yield.',
-    symptoms: [
-      'Yellowing of older leaves starting from tips',
-      'Stunted growth and thin stems',
-      'Smaller leaves and reduced flowering',
-      'Overall pale green appearance'
-    ],
-    causes: [
-      'Poor soil fertility',
-      'Over-watering leaching nutrients',
-      'pH imbalance preventing uptake',
-      'Competition from weeds',
-      'Sandy soils with poor retention'
-    ],
-    treatment: 'Apply balanced nitrogen fertilizer (10-10-10). For quick results, use water-soluble fertilizer as foliar spray. Add compost or well-rotted manure to soil.',
-    prevention: [
-      'Regular soil testing',
-      'Compost application',
-      'Plant nitrogen-fixing cover crops',
-      'Avoid over-watering',
-      'Mulching to retain nutrients'
-    ],
-    severity: 'medium',
-    affectedCrops: ['all vegetable crops', 'fruit trees', 'ornamental plants'],
-    seasonalRisk: { spring: 0.5, summer: 0.6, fall: 0.4, winter: 0.3 },
-    confidenceFactors: { imageQuality: 0.7, symptomClarity: 0.75, plantCondition: 0.8 }
-  },
-  {
-    id: 'spider-mites',
-    name: 'Spider Mite Infestation',
-    scientificName: 'Tetranychus urticae',
-    description: 'Microscopic pests that create fine webbing and cause stippled, yellowing leaves. Thrive in hot, dry conditions.',
-    symptoms: [
-      'Fine webbing on leaves and stems',
-      'Stippled or speckled appearance on leaves',
-      'Yellowing and bronzing of foliage',
-      'Premature leaf drop in severe cases'
-    ],
-    causes: [
-      'Hot, dry weather conditions',
-      'Low humidity',
-      'Dusty environments',
-      'Stressed plants',
-      'Indoor growing conditions'
-    ],
-    treatment: 'Increase humidity around plants. Spray with miticide or insecticidal soap. Use predatory mites as biological control. Wash leaves regularly with water.',
-    prevention: [
-      'Maintain adequate humidity',
-      'Regular misting of plants',
-      'Avoid over-fertilizing',
-      'Keep plants well-watered',
-      'Encourage beneficial insects'
-    ],
-    severity: 'high',
-    affectedCrops: ['indoor plants', 'vegetables', 'fruit trees', 'ornamentals'],
-    seasonalRisk: { spring: 0.4, summer: 0.9, fall: 0.6, winter: 0.3 },
-    confidenceFactors: { imageQuality: 0.6, symptomClarity: 0.7, plantCondition: 0.85 }
+    id: "R000006",
+    species_name: "Cedrus deodara",
+    common_name: "Deodar Cedar",
+    plant_type: "tree",
+    description: "Evergreen conifer with graceful branches. Excellent for landscaping and provides year-round carbon sequestration.",
+    environmental_benefits: "Absorbs 25.0 kg CO2 annually. Provides year-round green cover and improves air quality while supporting local ecosystems.",
+    landscaping_tips: "Prefers well-drained soil and full sun. Excellent for windbreaks and privacy screens. Low maintenance once established.",
+    co2_absorption: {
+      daily: 0.069,
+      annual: 25.0,
+      impact: "Equivalent to offsetting 915 km of car driving annually"
+    },
+    growth_conditions: {
+      height_m: 12.055,
+      canopy_m2: 13.223,
+      optimal_temp: 26.25,
+      rainfall_mm: 407.7,
+      soil_type: "Peaty"
+    },
+    confidence: 0.93
   }
 ];
 
@@ -287,25 +211,24 @@ export class EnhancedAIService {
 
     const processingTime = Date.now() - startTime;
 
-    // Select disease based on weighted probability (more realistic than pure random)
-    const currentSeason = this.getCurrentSeason();
-    const weightedDiseases = PLANT_DISEASES.map(disease => ({
-      disease,
-      weight: disease.seasonalRisk[currentSeason] * Math.random()
+    // Select plant based on weighted probability (more realistic than pure random)
+    const weightedPlants = PLANTS.map(plant => ({
+      plant,
+      weight: plant.confidence * Math.random()
     }));
 
-    weightedDiseases.sort((a, b) => b.weight - a.weight);
-    const primaryDisease = weightedDiseases[0].disease;
+    weightedPlants.sort((a, b) => b.weight - a.weight);
+    const primaryPlant = weightedPlants[0].plant;
 
-    // Calculate confidence based on image quality and disease factors
-    const baseConfidence = primaryDisease.confidenceFactors.imageQuality * imageQuality.score;
-    const randomVariation = (Math.random() - 0.5) * 0.3; // ±15% variation
-    const finalConfidence = Math.max(0.4, Math.min(0.99, baseConfidence + randomVariation));
+    // Calculate confidence based on image quality and plant factors
+    const baseConfidence = primaryPlant.confidence * imageQuality.score;
+    const randomVariation = (Math.random() - 0.5) * 0.2; // ±10% variation
+    const finalConfidence = Math.max(0.5, Math.min(0.99, baseConfidence + randomVariation));
 
-    // Generate alternative diagnoses
-    const alternatives = weightedDiseases.slice(1, 3).map(item => ({
-      disease: item.disease.name,
-      confidence: Math.max(0.1, finalConfidence * (0.3 + Math.random() * 0.4))
+    // Generate alternative species
+    const alternatives = weightedPlants.slice(1, 3).map(item => ({
+      species: item.plant.common_name,
+      confidence: Math.max(0.2, finalConfidence * (0.4 + Math.random() * 0.3))
     }));
 
     // Determine certainty level
@@ -317,7 +240,7 @@ export class EnhancedAIService {
     else certainty = 'very_low';
 
     return {
-      disease: primaryDisease,
+      plant: primaryPlant,
       confidence: Math.round(finalConfidence * 100) / 100,
       certainty,
       processingTime,
@@ -325,21 +248,25 @@ export class EnhancedAIService {
       alternativeDiagnoses: alternatives,
       recommendations: {
         immediate: [
-          primaryDisease.treatment,
-          'Monitor plant daily for changes',
-          'Isolate affected plants if possible'
+          primaryPlant.landscaping_tips,
+          'Monitor plant health regularly',
+          'Ensure proper watering and soil conditions'
         ],
         followUp: [
-          'Reapply treatment in 7-10 days if symptoms persist',
-          'Take photos to track progress',
-          'Consider soil testing if problem recurring'
+          'Track growth and CO2 absorption over time',
+          'Consider professional landscaping consultation',
+          'Update care routine based on seasonal changes'
         ],
-        prevention: primaryDisease.prevention.slice(0, 3)
+        prevention: [
+          'Regular soil testing and nutrient management',
+          'Proper pruning and maintenance',
+          'Seasonal care adjustments'
+        ]
       }
     };
   }
 
-  private static getCurrentSeason(): keyof PlantDiseaseData['seasonalRisk'] {
+  private static getCurrentSeason(): string {
     const month = new Date().getMonth();
     if (month >= 2 && month <= 4) return 'spring';
     if (month >= 5 && month <= 7) return 'summer';

@@ -30,11 +30,14 @@ const NewPostModal: React.FC<NewPostModalProps> = ({ isOpen, onClose, onSubmit }
   const { toast } = useToast();
   
   const categories: { value: ForumCategory; label: string }[] = [
-    { value: 'disease', label: 'Disease Identification' },
-    { value: 'prevention', label: 'Prevention' },
-    { value: 'treatment', label: 'Treatment' },
-    { value: 'techniques', label: 'Growing Techniques' },
-    { value: 'questions', label: 'Questions' },
+    { value: 'carbon-sequestration', label: 'Carbon Sequestration' },
+    { value: 'urban-gardening', label: 'Urban Gardening' },
+    { value: 'reforestation', label: 'Reforestation' },
+    { value: 'growing-techniques', label: 'Growing Techniques' },
+    { value: 'care-tips', label: 'Care Tips' },
+    { value: 'plant-identification', label: 'Plant Identification' },
+    { value: 'conservation', label: 'Conservation' },
+    { value: 'community-projects', label: 'Community Projects' },
   ];
 
   const handleAddTag = () => {
@@ -146,7 +149,7 @@ const NewPostModal: React.FC<NewPostModalProps> = ({ isOpen, onClose, onSubmit }
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle className="text-xl text-green-800">Create New Post</DialogTitle>
+          <DialogTitle className="text-xl text-green-800">Share Your Plant Knowledge</DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4 py-2">
@@ -159,7 +162,7 @@ const NewPostModal: React.FC<NewPostModalProps> = ({ isOpen, onClose, onSubmit }
                 setTitle(e.target.value);
                 if (e.target.value.trim()) setTitleError("");
               }}
-              placeholder="Write a descriptive title..."
+              placeholder="e.g., Mango Tree Care: Maximizing CO2 Absorption"
               className={`border-green-100 focus-visible:ring-green-500 ${titleError ? 'border-red-300' : ''}`}
               disabled={isSubmitting}
             />
@@ -175,7 +178,7 @@ const NewPostModal: React.FC<NewPostModalProps> = ({ isOpen, onClose, onSubmit }
                 setContent(e.target.value);
                 if (e.target.value.trim()) setContentError("");
               }}
-              placeholder="Share your experience, question or advice..."
+              placeholder="Share your experiences with carbon sequestration, growing techniques, or ask about plant care..."
               className={`min-h-[150px] border-green-100 focus-visible:ring-green-500 ${contentError ? 'border-red-300' : ''}`}
               disabled={isSubmitting}
             />
@@ -206,7 +209,7 @@ const NewPostModal: React.FC<NewPostModalProps> = ({ isOpen, onClose, onSubmit }
                 value={tag} 
                 onChange={(e) => setTag(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Add tag and press Enter"
+                placeholder="e.g., co2-absorption, mango-trees, urban-gardening"
                 className={`border-green-100 focus-visible:ring-green-500 ${tagsError ? 'border-red-300' : ''}`}
                 disabled={isSubmitting}
               />

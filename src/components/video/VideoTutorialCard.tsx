@@ -1,59 +1,62 @@
 
 import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Play } from "lucide-react";
+import { Play, Clock } from "lucide-react";
 import { VideoTutorial } from "@/types/video";
 
 interface VideoTutorialCardProps {
   video: VideoTutorial;
-  onVideoClick?: (videoId: string) => void;
+  onSelect: (id: string) => void;
+  isSelected: boolean;
 }
 
-const VideoTutorialCard: React.FC<VideoTutorialCardProps> = ({ video, onVideoClick }) => {
-  const handleClick = () => {
-    if (onVideoClick) {
-      onVideoClick(video.id);
-    }
+const VideoTutorialCard: React.FC<VideoTutorialCardProps> = ({ video, onSelect, isSelected }) => {
+  const handleCardClick = () => {
+    onSelect(video.id);
   };
 
   return (
-    <Card 
-      key={video.id} 
-      className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer" 
-      onClick={handleClick}
+    <Card
+      className={`cursor-pointer transition-shadow hover:shadow-lg ${
+        isSelected ? 'border-green-500 border-2' : ''
+      }`}
+      onClick={handleCardClick}
     >
-      <div className="relative">
-        <img 
-          src={video.thumbnail} 
-          alt={video.title}
-          className="w-full aspect-video object-cover"
-        />
-        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-          <div className="bg-amber-500 rounded-full p-3">
-            <Play className="h-8 w-8 text-white" fill="white" />
+      <CardHeader className="py-3 px-4">
+        <div className="flex justify-between items-start">
+          <div className="flex items-center space-x-2">
+            <div className="text-green-600">
+              <Play className="h-4 w-4" />
+            </div>
+            <div>
+              <CardTitle className="text-md font-medium text-green-800">{video.title}</CardTitle>
+              <p className="text-xs text-gray-500">{video.instructor.name}</p>
+            </div>
           </div>
+          <Badge variant="outline" className="bg-green-50 text-green-800 border-green-200">
+            {video.category === 'plants' ? 'Plants' :
+             video.category === 'landscaping' ? 'Landscaping' :
+             video.category === 'nft' ? 'NFT & Tech' : video.category.charAt(0).toUpperCase() + video.category.slice(1)}
+          </Badge>
         </div>
-        <div className="absolute top-2 right-2 bg-amber-600 text-white text-xs px-2 py-1 rounded">
-          {video.duration}
-        </div>
-        <Badge className="absolute bottom-2 left-2 bg-amber-500/90">
-          {video.category.charAt(0).toUpperCase() + video.category.slice(1)}
-        </Badge>
-      </div>
-      <CardContent className="p-4">
-        <h3 className="font-bold text-amber-800 text-lg line-clamp-1">{video.title}</h3>
-        <p className="text-amber-700 mt-2 text-sm line-clamp-2">{video.description}</p>
-        <div className="flex items-center mt-3 justify-between">
+      </CardHeader>
+      <CardContent className="py-2 px-4">
+        <CardDescription className="text-sm line-clamp-2">
+          {video.description}
+        </CardDescription>
+      </CardContent>
+      <CardContent className="py-2 px-4">
+        <div className="flex items-center justify-between w-full text-xs text-gray-500">
           <div className="flex items-center">
-            <Avatar className="h-8 w-8 mr-2">
-              <AvatarImage src={video.instructor.avatar} />
-              <AvatarFallback>{video.instructor.initials}</AvatarFallback>
-            </Avatar>
-            <span className="text-xs text-gray-600">{video.instructor.name}</span>
+            <Clock className="h-3 w-3 mr-1" />
+            <span>{video.duration}</span>
           </div>
-          <span className="text-xs text-gray-500">{video.views} views</span>
+          <div className="flex items-center">
+            <span>👁️ </span>
+            <span className="ml-1">{video.views}</span>
+          </div>
         </div>
       </CardContent>
     </Card>

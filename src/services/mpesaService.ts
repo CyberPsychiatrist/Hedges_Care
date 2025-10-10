@@ -40,12 +40,14 @@ const mockMpesaService = {
     
     localStorage.setItem(`mpesa_transaction_${checkoutRequestId}`, JSON.stringify(mockTransaction));
     
-    // Simulate successful payment after 5 seconds
+    // Simulate successful payment after timeout
+    const paymentTimeout = Number(import.meta.env.VITE_MPESA_PAYMENT_TIMEOUT) || 5000;
     setTimeout(() => {
+      const transactionPrefix = import.meta.env.VITE_MPESA_PREFIX || 'MP';
       const completedTransaction = {
         ...mockTransaction,
         status: 'COMPLETED',
-        transaction_id: `MP${Date.now()}`,
+        transaction_id: `${transactionPrefix}${Date.now()}`,
         completed_at: new Date().toISOString()
       };
       localStorage.setItem(`mpesa_transaction_${checkoutRequestId}`, JSON.stringify(completedTransaction));

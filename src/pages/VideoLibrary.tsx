@@ -1,224 +1,187 @@
-
-import React, { useState, useMemo } from "react";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
+import React, { useState, useEffect } from "react";
+import { Search, Play, Clock, Users, Eye, Info } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useIsMobile } from "@/hooks/use-mobile";
 import VideoTutorialCard from "@/components/video/VideoTutorialCard";
-import VideoSearchFilter from "@/components/video/VideoSearchFilter";
 import VideoModal from "@/components/video/VideoModal";
 import { videoTutorials } from "@/data/videoTutorials";
 import { VideoTutorial } from "@/types/video";
-import { ArrowLeft, PlayCircle, Clock, Eye } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import Navigation from "@/components/layout/Navigation";
+import FooterSection from "@/components/landing/FooterSection";
 
 const VideoLibrary: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState("all");
-  const [selectedVideo, setSelectedVideo] = useState<VideoTutorial | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [sortBy, setSortBy] = useState<"views" | "duration" | "title">("views");
+  const [activeTab, setActiveTab] = useState("video-library");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const isMobile = useIsMobile();
-  const navigate = useNavigate();
   
-  // Filter and sort videos
-  const filteredAndSortedVideos = useMemo(() => {
-    const filtered = videoTutorials.filter(video => {
-      const matchesSearch = video.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                            video.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            video.instructor.name.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = activeCategory === 'all' || video.category === activeCategory;
-      return matchesSearch && matchesCategory;
-    });
-
-    // Sort videos
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case "views": {
-          const aViews = parseInt(a.views.replace(/[^\d]/g, ''));
-          const bViews = parseInt(b.views.replace(/[^\d]/g, ''));
-          return bViews - aViews;
-        }
-        case "duration": {
-          const aDuration = a.duration.split(':').reduce((acc, time) => (60 * acc) + +time, 0);
-          const bDuration = b.duration.split(':').reduce((acc, time) => (60 * acc) + +time, 0);
-          return bDuration - aDuration;
-        }
-        case "title":
-          return a.title.localeCompare(b.title);
-        default:
-          return 0;
-      }
-    });
-
-    return filtered;
-  }, [searchQuery, activeCategory, sortBy]);
+  // Filter videos based on search term and category
+  const filteredVideos = videoTutorials.filter((video) => {
+    const matchesSearch =
+      video.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      video.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      video.instructor.name.toLowerCase().includes(searchTerm.toLowerCase());
+      
+    const matchesCategory =
+      selectedCategory === "all" || video.category === selectedCategory;
+    
+    return matchesSearch && matchesCategory;
+  });
   
-  const handleVideoClick = (videoId: string) => {
-    const video = videoTutorials.find(v => v.id === videoId);
-    if (video) {
-      setSelectedVideo(video);
-      setIsModalOpen(true);
+  // Handle video selection
+  const handleVideoSelect = (videoId: string) => {
+    setSelectedVideo(videoId);
+    if (isMobile) {
+      // For mobile, switch to the details tab when a video is selected
+      document.getElementById("details-tab")?.click();
     }
   };
-
-  const handleGoBack = () => {
-    navigate('/');
-  };
-
-  // Get category stats
-  const categoryStats = useMemo(() => {
-    const stats = {
-      all: videoTutorials.length,
-      disease: 0,
-      prevention: 0,
-      treatment: 0,
-      techniques: 0
-    };
-    
-    videoTutorials.forEach(video => {
-      if (video.category in stats) {
-        stats[video.category as keyof typeof stats]++;
-      }
-    });
-    
-    return stats;
-  }, []);
-
-  const totalViews = useMemo(() => {
-    return videoTutorials.reduce((sum, video) => {
-      const views = parseInt(video.views.replace(/[^\d]/g, ''));
-      return sum + views;
-    }, 0);
-  }, []);
   
+  // Get unique categories for filter dropdown
+  const categories = Array.from(
+    new Set(videoTutorials.map((video) => video.category))
+  );
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-green-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center mb-6">
-          <Button 
-            variant="ghost" 
-            onClick={handleGoBack}
-            className="mr-4 text-amber-800 hover:text-amber-600 hover:bg-amber-100/80"
-          >
-            <ArrowLeft className="h-5 w-5 mr-1" />
-            Back to Home
-          </Button>
-        </div>
-        
-        {/* Header Section */}
-        <div className="mb-8">
-          <div className="flex items-center mb-4">
-            <PlayCircle className="h-8 w-8 text-amber-600 mr-3" />
-            <h1 className="text-4xl font-bold text-amber-800">Video Learning Center</h1>
-          </div>
-          <p className="text-amber-700 text-lg mb-4">
-            Master agricultural techniques with expert-led video tutorials covering disease management, prevention strategies, and modern farming methods.
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-green-50 to-white">
+      <Navigation activeTab={activeTab} setActiveTab={(tab) => setActiveTab(tab)} />
+
+      <div className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold text-green-800 mb-2">Sustainable Learning Center</h1>
+          <p className="text-green-700 max-w-2xl mx-auto">
+            Explore comprehensive tutorials on sustainable gardening, landscaping, and NFT-powered environmental initiatives supporting UNSDG 15 (Life on Land).
           </p>
-          
-          {/* Stats Section */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 text-center border border-amber-200">
-              <div className="text-2xl font-bold text-amber-800">{videoTutorials.length}</div>
-              <div className="text-sm text-amber-600">Total Videos</div>
-            </div>
-            <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 text-center border border-amber-200">
-              <div className="text-2xl font-bold text-green-800">{Math.floor(totalViews / 1000)}k+</div>
-              <div className="text-sm text-green-600">Total Views</div>
-            </div>
-            <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 text-center border border-amber-200">
-              <div className="text-2xl font-bold text-blue-800">10+</div>
-              <div className="text-sm text-blue-600">Expert Instructors</div>
-            </div>
-            <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 text-center border border-amber-200">
-              <div className="text-2xl font-bold text-purple-800">4</div>
-              <div className="text-sm text-purple-600">Categories</div>
-            </div>
+        </div>
+        
+        <div className="relative mb-6">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <Input
+            placeholder="Search by video title, description, or instructor..."
+            className="pl-10 pr-4 py-2 rounded-lg border-gray-300 focus:border-green-500 focus:ring focus:ring-green-200 focus:ring-opacity-50"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        
+        <div className="flex justify-end mb-4">
+          <div className="flex items-center">
+            <Search className="mr-2 text-green-700" size={16} />
+            <span className="text-green-700 mr-2">Filter by:</span>
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger className="w-[160px]">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                {categories.map((category) => (
+                  <SelectItem key={category} value={category}>{category.charAt(0).toUpperCase() + category.slice(1)}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
         
-        <Tabs value={activeCategory} onValueChange={setActiveCategory}>
-          <VideoSearchFilter 
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            activeCategory={activeCategory}
-            setActiveCategory={setActiveCategory}
-          />
-          
-          {/* Sort Options */}
-          <div className="flex flex-wrap items-center justify-between mb-6 gap-4">
-            <div className="flex flex-wrap gap-2">
-              {Object.entries(categoryStats).map(([category, count]) => (
-                <Badge 
-                  key={category}
-                  variant={activeCategory === category ? "default" : "secondary"}
-                  className={`cursor-pointer ${
-                    activeCategory === category 
-                      ? "bg-amber-600 text-white" 
-                      : "bg-amber-100 text-amber-800 hover:bg-amber-200"
-                  }`}
-                  onClick={() => setActiveCategory(category)}
-                >
-                  {category === 'all' ? 'All Videos' : category.charAt(0).toUpperCase() + category.slice(1)} ({count})
-                </Badge>
-              ))}
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-amber-700">Sort by:</span>
-              <select 
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as "views" | "duration" | "title")}
-                className="px-3 py-1 text-sm border border-amber-200 rounded-md bg-white/80 text-amber-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
-              >
-                <option value="views">Most Viewed</option>
-                <option value="duration">Longest First</option>
-                <option value="title">Alphabetical</option>
-              </select>
-            </div>
-          </div>
-          
-          <TabsContent value={activeCategory} className="mt-0">
-            {filteredAndSortedVideos.length > 0 ? (
-              <div className={`grid grid-cols-1 ${isMobile ? 'sm:grid-cols-2' : 'sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'} gap-6`}>
-                {filteredAndSortedVideos.map(video => (
-                  <VideoTutorialCard 
-                    key={video.id} 
-                    video={video} 
-                    onVideoClick={handleVideoClick} 
+        <div className="bg-white rounded-lg shadow-md p-4 mb-8">
+          {isMobile ? (
+            <Tabs defaultValue="list">
+              <TabsList className="grid w-full grid-cols-2 mb-6">
+                <TabsTrigger value="list">Video List</TabsTrigger>
+                <TabsTrigger value="details" id="details-tab">Video Details</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="list" className="mt-0">
+                <ScrollArea className="h-[60vh]">
+                  <div className="grid grid-cols-1 gap-4">
+                    {filteredVideos.length > 0 ? (
+                      filteredVideos.map((video) => (
+                        <VideoTutorialCard
+                          key={video.id}
+                          video={video}
+                          onSelect={handleVideoSelect}
+                          isSelected={video.id === selectedVideo}
+                        />
+                      ))
+                    ) : (
+                      <div className="text-center py-10">
+                        <Info className="mx-auto h-12 w-12 text-gray-400" />
+                        <h3 className="mt-2 text-sm font-semibold text-gray-900">No videos found</h3>
+                        <p className="mt-1 text-sm text-gray-500">Try adjusting your search or filter terms.</p>
+                      </div>
+                    )}
+                  </div>
+                </ScrollArea>
+              </TabsContent>
+              
+              <TabsContent value="details" className="mt-0">
+                {selectedVideo ? (
+                  <VideoModal
+                    video={videoTutorials.find(v => v.id === selectedVideo)!}
+                    onClose={() => setSelectedVideo(null)}
                   />
-                ))}
+                ) : (
+                  <div className="text-center py-20">
+                    <Info className="mx-auto h-12 w-12 text-gray-400" />
+                    <h3 className="mt-2 text-lg font-medium text-gray-900">No Video selected</h3>
+                    <p className="mt-1 text-sm text-gray-500">Select a video from the list to view details.</p>
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
+          ) : (
+            <div className="flex">
+              <div className="w-1/3 pr-4 border-r border-gray-200">
+                <h2 className="text-lg font-semibold text-green-800 mb-4">Video List</h2>
+                <ScrollArea className="h-[70vh]">
+                  <div className="grid grid-cols-1 gap-4 pr-2">
+                    {filteredVideos.length > 0 ? (
+                      filteredVideos.map((video) => (
+                        <VideoTutorialCard
+                          key={video.id}
+                          video={video}
+                          onSelect={handleVideoSelect}
+                          isSelected={video.id === selectedVideo}
+                        />
+                      ))
+                    ) : (
+                      <div className="text-center py-10">
+                        <Info className="mx-auto h-12 w-12 text-gray-400" />
+                        <h3 className="mt-2 text-sm font-semibold text-gray-900">No videos found</h3>
+                        <p className="mt-1 text-sm text-gray-500">Try adjusting your search or filter terms.</p>
+                      </div>
+                    )}
+                  </div>
+                </ScrollArea>
               </div>
-            ) : (
-              <div className="col-span-full py-16 text-center bg-white/60 backdrop-blur-sm rounded-lg border border-amber-200">
-                <div className="max-w-md mx-auto">
-                  <Eye className="h-16 w-16 text-amber-400 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-amber-800 mb-2">No videos found</h3>
-                  <p className="text-amber-600 mb-4">
-                    We couldn't find any videos matching your search criteria.
-                  </p>
-                  <Button 
-                    variant="outline"
-                    onClick={() => {
-                      setSearchQuery("");
-                      setActiveCategory("all");
-                    }}
-                    className="text-amber-700 border-amber-300 hover:bg-amber-50"
-                  >
-                    Clear Filters
-                  </Button>
-                </div>
+              
+              <div className="w-2/3 pl-6">
+                <h2 className="text-lg font-semibold text-green-800 mb-4">Video Details</h2>
+                {selectedVideo ? (
+                  <VideoModal
+                    video={videoTutorials.find(v => v.id === selectedVideo)!}
+                    onClose={() => setSelectedVideo(null)}
+                  />
+                ) : (
+                  <div className="text-center py-20">
+                    <Info className="mx-auto h-12 w-12 text-gray-400" />
+                    <h3 className="mt-2 text-lg font-medium text-gray-900">No Video selected</h3>
+                    <p className="mt-1 text-sm text-gray-500">Select a video from the list to view details.</p>
+                  </div>
+                )}
               </div>
-            )}
-          </TabsContent>
-        </Tabs>
-        
-        <VideoModal 
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          video={selectedVideo}
-        />
+            </div>
+          )}
+        </div>
       </div>
+      
+      <FooterSection />
     </div>
   );
 };

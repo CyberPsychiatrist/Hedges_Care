@@ -7,14 +7,22 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { TimelineEntryProps, TimelineEntryStatus } from "./TimelineEntry";
-import { Upload, Loader2 } from "lucide-react";
+import { Upload, Loader2, TreePine, Leaf, Droplets, Info, Calendar, TrendingUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { PlantData } from "@/services/enhancedAIService";
+import { format } from "date-fns";
 
 interface AddTimelineEntryModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (entry: TimelineEntryProps) => void;
   currentImage?: string;
+  scanData?: {
+    diagnosis: string;
+    plantData: PlantData;
+    confidence: number;
+    image: string;
+  };
 }
 
 const AddTimelineEntryModal: React.FC<AddTimelineEntryModalProps> = ({
@@ -22,13 +30,22 @@ const AddTimelineEntryModal: React.FC<AddTimelineEntryModalProps> = ({
   onClose,
   onSave,
   currentImage,
+  scanData,
 }) => {
   const [image, setImage] = useState<string | null>(currentImage || null);
-  const [notes, setNotes] = useState("");
+  const [notes, setNotes] = useState(scanData ? scanData.diagnosis : "");
   const [status, setStatus] = useState<TimelineEntryStatus>("unchanged");
   const [treatmentApplied, setTreatmentApplied] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
+
+  // Auto-populate with scan data if available
+  React.useEffect(() => {
+    if (scanData) {
+      setImage(scanData.image);
+      setNotes(scanData.diagnosis);
+    }
+  }, [scanData]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -64,10 +81,20 @@ const AddTimelineEntryModal: React.FC<AddTimelineEntryModalProps> = ({
 
     const newEntry: TimelineEntryProps = {
       date: new Date(),
+      dateFormatted: format(new Date(), "MMM d, yyyy 'at' h:mm a"),
       image,
       notes,
       status,
       treatmentApplied: treatmentApplied || undefined,
+      // Include scan data if available
+      ...(scanData && {
+        diagnosis: scanData.diagnosis,
+        commonName: scanData.plantData.common_name,
+        plantType: scanData.plantData.plant_type,
+        confidence: scanData.confidence,
+        co2Absorption: scanData.plantData.co2_absorption,
+        growthConditions: scanData.plantData.growth_conditions,
+      }),
     };
 
     onSave(newEntry);
@@ -84,15 +111,122 @@ const AddTimelineEntryModal: React.FC<AddTimelineEntryModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Add Timeline Entry</DialogTitle>
           <DialogDescription>
-            Record the current state of your plant and any treatments applied.
+            {scanData ? (
+              <>
+                Record the current state of your <strong>{scanData.plantData.common_name}</strong> and any treatments applied.
+              </>
+            ) : (
+              "Record the current state of your plant and any treatments applied."
+            )}
           </DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
+          {/* Show plant information if scan data is available */}
+          {scanData && (
+            <div className="space-y-4">
+              {/* Plant Information Card */}
+              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                  <Info className="h-4 w-4" />
+                  Plant Information
+                </h4>
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <span className="font-medium text-gray-700">Species:</span>
+                    <p className="text-gray-600">{scanData.plantData.species_name}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-700">Common Name:</span>
+                    <p className="text-gray-600">{scanData.plantData.common_name}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-700">Type:</span>
+                    <p className="text-gray-600 capitalize">{scanData.plantData.plant_type}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-700">Confidence:</span>
+                    <p className="text-gray-600">{(scanData.confidence * 100).toFixed(0)}%</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Environmental Impact Card */}
+              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <h4 className="font-medium text-blue-800 mb-3 flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4" />
+                  Environmental Impact
+                </h4>
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <span className="font-medium text-gray-700">CO₂ Absorption:</span>
+                    <p className="text-blue-600 font-semibold">{scanData.plantData.co2_absorption?.annual.toFixed(1)} kg/year</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-700">Daily Absorption:</span>
+                    <p className="text-blue-600 font-semibold">{scanData.plantData.co2_absorption?.daily.toFixed(3)} kg/day</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-700">Avg Height:</span>
+                    <p className="text-gray-600">{scanData.plantData.growth_conditions?.height_m.toFixed(1)}m</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-700">Canopy Size:</span>
+                    <p className="text-gray-600">{scanData.plantData.growth_conditions?.canopy_m2.toFixed(1)} m²</p>
+                  </div>
+                </div>
+                <div className="mt-3 p-3 bg-green-100 rounded-lg">
+                  <p className="text-xs text-green-800">
+                    <strong>Equivalent to:</strong> Reducing {Math.round(scanData.plantData.co2_absorption?.annual * 50 || 0)} km of car driving annually
+                  </p>
+                </div>
+              </div>
+
+              {/* Optimal Conditions Card */}
+              <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                <h4 className="font-medium text-purple-800 mb-3 flex items-center gap-2">
+                  <Calendar className="h-4 w-4" />
+                  Optimal Growing Conditions
+                </h4>
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <span className="font-medium text-gray-700">Temperature:</span>
+                    <p className="text-gray-600">{scanData.plantData.growth_conditions?.optimal_temp.toFixed(1)}°C</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-700">Rainfall:</span>
+                    <p className="text-gray-600">{scanData.plantData.growth_conditions?.rainfall_mm.toFixed(0)}mm/year</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-700">Soil Type:</span>
+                    <p className="text-gray-600 capitalize">{scanData.plantData.growth_conditions?.soil_type}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-700">Height:</span>
+                    <p className="text-gray-600">{scanData.plantData.growth_conditions?.height_m.toFixed(1)}m</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Landscaping Tips Card */}
+              <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
+                <h4 className="font-medium text-orange-800 mb-3 flex items-center gap-2">
+                  <Leaf className="h-4 w-4" />
+                  Landscaping & Care Tips
+                </h4>
+                <div className="text-sm text-gray-700">
+                  <p className="mb-2"><strong>Tips:</strong></p>
+                  <p className="mb-3">{scanData.plantData.landscaping_tips}</p>
+                  <p><strong>Benefits:</strong> {scanData.plantData.environmental_benefits}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="grid gap-2">
             <Label htmlFor="image">Plant Image</Label>
             {image ? (
@@ -176,7 +310,9 @@ const AddTimelineEntryModal: React.FC<AddTimelineEntryModalProps> = ({
               id="notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Describe the current condition of your plant..."
+              placeholder={scanData
+                ? "Add observations about the plant's condition since last scan..."
+                : "Describe the current condition of your plant..."}
               rows={3}
             />
           </div>

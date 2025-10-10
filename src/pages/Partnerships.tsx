@@ -39,8 +39,8 @@ interface Partner {
 interface DeploymentMetrics {
   totalFarmers: number;
   regionsServed: number;
-  cropsAnalyzed: number;
-  yieldImprovement: number;
+  plantsAnalyzed: number;
+  carbonSequestration: number; // tons of CO2 captured
 }
 
 const Partnerships = () => {
@@ -55,8 +55,8 @@ const Partnerships = () => {
   const [metrics] = useState<DeploymentMetrics>({
     totalFarmers: 15420,
     regionsServed: 23,
-    cropsAnalyzed: 89340,
-    yieldImprovement: 34.2
+    plantsAnalyzed: 89340,
+    carbonSequestration: 2847.5 // tons of CO2 captured
   });
 
   const { t } = useLanguage();
@@ -64,70 +64,70 @@ const Partnerships = () => {
 
   const partners: Partner[] = [
     {
-      id: 'fao',
-      name: 'Food and Agriculture Organization (FAO)',
+      id: 'unep',
+      name: 'United Nations Environment Programme',
       type: 'ngo',
-      logo: '🌾',
-      description: 'Leading efforts to defeat hunger and improve nutrition and food security',
-      impact: '500,000+ smallholder farmers reached',
-      website: 'https://www.fao.org',
+      logo: '🌍',
+      description: 'Leading global environmental authority that sets the global environmental agenda',
+      impact: '150+ countries, 2.5M+ hectares reforested',
+      website: 'https://www.unep.org',
       location: 'Global',
-      programs: ['Digital Agriculture Initiative', 'Smallholder Support Program', 'Climate-Smart Agriculture']
+      programs: ['Billion Tree Campaign', 'Carbon Sequestration Initiative', 'Green Economy']
     },
     {
-      id: 'usaid',
-      name: 'USAID Feed the Future',
+      id: 'world-resources-institute',
+      name: 'World Resources Institute (WRI)',
+      type: 'ngo',
+      logo: '🌱',
+      description: 'Global research organization that works on sustainable resource use',
+      impact: '100M+ hectares of land under sustainable management',
+      website: 'https://www.wri.org',
+      location: 'United States (Global reach)',
+      programs: ['Global Forest Watch', 'Food and Land Use', 'Carbon Program']
+    },
+    {
+      id: 'african-green-wall',
+      name: 'African Union Great Green Wall Initiative',
       type: 'government',
-      logo: '🇺🇸',
-      description: 'US Government initiative to address global hunger and food security',
-      impact: '12 countries, 2M+ farmers benefited',
-      website: 'https://www.feedthefuture.gov',
-      location: 'United States',
-      programs: ['Innovation Labs', 'Digital Agriculture', 'Value Chain Development']
+      logo: '🌳',
+      description: 'Ambitious project to grow an 8,000 km natural wonder across Africa',
+      impact: '100M+ hectares to be restored, 10M+ jobs created',
+      website: 'https://www.greatgreenwall.org',
+      location: 'Africa',
+      programs: ['Land Restoration', 'Climate Resilience', 'Livelihood Creation']
     },
     {
-      id: 'cimmyt',
-      name: 'International Maize and Wheat Improvement Center',
+      id: 'plant-for-the-planet',
+      name: 'Plant-for-the-Planet',
       type: 'ngo',
-      logo: '🌽',
-      description: 'Research and development for sustainable maize and wheat systems',
-      impact: '300+ varieties developed, 150M farmers served',
-      website: 'https://www.cimmyt.org',
-      location: 'Mexico (Global reach)',
-      programs: ['Breeding Programs', 'Digital Agriculture', 'Climate Adaptation']
-    },
-    {
-      id: 'cgiar',
-      name: 'CGIAR',
-      type: 'ngo',
-      logo: '🔬',
-      description: 'Global research partnership for a food-secure future',
-      impact: 'Research benefiting 3 billion people',
-      website: 'https://www.cgiar.org',
+      logo: '🌳',
+      description: 'Youth-led movement focused on planting trees worldwide',
+      impact: '15B+ trees planted, 200+ countries involved',
+      website: 'https://www.plant-for-the-planet.org',
       location: 'Global',
-      programs: ['Climate Change Initiative', 'Digital Innovation', 'Gender Equality']
+      programs: ['Trillion Campaign', 'Youth Network', 'Ecosystem Restoration']
     },
     {
-      id: 'acdi-voca',
-      name: 'ACDI/VOCA',
+      id: 'we-forest',
+      name: 'WeForest',
       type: 'ngo',
-      logo: '🤝',
-      description: 'Economic opportunities for farmers and rural communities',
-      impact: '9M+ people reached in 145+ countries',
-      website: 'https://www.acdivoca.org',
+      logo: '🌿',
+      description: 'Non-profit dedicated to sustainable forest restoration and conservation',
+      impact: '450M+ trees planted, 500K+ hectares restored',
+      website: 'https://www.weforest.org',
       location: 'Global',
-      programs: ['Digital Agriculture', 'Market Linkages', 'Youth in Agriculture']
+      programs: ['Corporate Reforestation', 'Women in Forestry', 'Biodiversity Protection']
     },
     {
-      id: 'ministry-kenya',
-      name: 'Ministry of Agriculture - Kenya',
+      id: 'kenya-forestry-service',
+      name: 'Kenya Forest Service',
       type: 'government',
       logo: '🇰🇪',
-      description: 'Government body overseeing agricultural development in Kenya',
-      impact: '4M+ farmers in national programs',
-      website: 'https://kilimo.go.ke',
+      description: 'Government body responsible for forest conservation and management in Kenya',
+      impact: '7.6% forest cover target, 50K+ hectares reforested annually',
+      website: 'https://www.kenyaforestservice.org',
       location: 'Kenya',
-      programs: ['Digital Extension Services', 'Crop Insurance', 'Market Information Systems']
+      programs: ['National Forest Policy', 'Community Forest Associations', 'Urban Forestry']
     }
   ];
 
@@ -169,16 +169,16 @@ const Partnerships = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-green-50">
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-blue-50">
       <Navigation />
       
       <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            🤝 Global Partnerships
+            🌱 Plant Carbon Partnerships
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Collaborating with leading organizations to scale AI-powered Zero Carborn Emission Ecologies
+            Collaborating with organizations to scale carbon sequestration through high-efficiency plant cultivation and reforestation
           </p>
         </div>
 
@@ -206,7 +206,7 @@ const Partnerships = () => {
             <CardContent className="text-center py-6">
               <Target className="h-8 w-8 text-purple-600 mx-auto mb-2" />
               <div className="text-2xl font-bold text-purple-600">
-                {metrics.cropsAnalyzed.toLocaleString()}+
+                {metrics.plantsAnalyzed.toLocaleString()}+
               </div>
               <div className="text-sm text-gray-600">Plants Analyzed</div>
             </CardContent>
@@ -215,8 +215,8 @@ const Partnerships = () => {
           <Card>
             <CardContent className="text-center py-6">
               <Award className="h-8 w-8 text-orange-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-orange-600">+{metrics.yieldImprovement}%</div>
-              <div className="text-sm text-gray-600">Carbon Emmission Improvement</div>
+              <div className="text-2xl font-bold text-orange-600">{metrics.carbonSequestration.toLocaleString()}+</div>
+              <div className="text-sm text-gray-600">Tons CO₂ Sequestered</div>
             </CardContent>
           </Card>
         </div>
@@ -302,18 +302,18 @@ const Partnerships = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Users className="h-5 w-5 text-blue-600" />
-                    Smallholder Farmer Program
+                    Urban Carbon Gardens
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-gray-600 mb-4">
-                    Free access to AI Scanning tool
+                    High-efficiency plant cultivation for urban carbon sequestration
                   </p>
                   <ul className="text-sm space-y-1">
-                    <li>• Free disease diagnosis</li>
-                    <li>• SMS-based results delivery</li>
-                    <li>• Local language support</li>
-                    <li>• Extension officer integration</li>
+                    <li>• CO2-absorbing plant selection</li>
+                    <li>• Urban space optimization</li>
+                    <li>• Maintenance training programs</li>
+                    <li>• Carbon tracking and reporting</li>
                   </ul>
                 </CardContent>
               </Card>
@@ -322,18 +322,18 @@ const Partnerships = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Globe className="h-5 w-5 text-green-600" />
-                    Government Integration
+                    Reforestation Initiatives
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-gray-600 mb-4">
-                    National agricultural systems integration for policy makers
+                    Large-scale tree planting for carbon offset and ecosystem restoration
                   </p>
                   <ul className="text-sm space-y-1">
-                    <li>• Real-time disease monitoring</li>
-                    <li>• Early warning systems</li>
-                    <li>• Policy recommendation dashboards</li>
-                    <li>• Resource allocation optimization</li>
+                    <li>• Native species selection</li>
+                    <li>• Drone-assisted planting</li>
+                    <li>• Long-term monitoring systems</li>
+                    <li>• Community engagement programs</li>
                   </ul>
                 </CardContent>
               </Card>
@@ -342,18 +342,18 @@ const Partnerships = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Building2 className="h-5 w-5 text-purple-600" />
-                    Research Collaboration
+                    Research Partnership
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-gray-600 mb-4">
-                    Joint research programs with universities and research institutions
+                    Advanced research on high-carbon sequestration plant species
                   </p>
                   <ul className="text-sm space-y-1">
-                    <li>• Data sharing partnerships</li>
-                    <li>• Model improvement collaboration</li>
-                    <li>• Field trial coordination</li>
-                    <li>• Publication partnerships</li>
+                    <li>• Hybrid plant development</li>
+                    <li>• Growth optimization studies</li>
+                    <li>• Climate adaptation research</li>
+                    <li>• Scientific publication collaboration</li>
                   </ul>
                 </CardContent>
               </Card>
@@ -362,18 +362,18 @@ const Partnerships = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <HandHeart className="h-5 w-5 text-orange-600" />
-                    Humanitarian Response
+                    Community Forestry
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-gray-600 mb-4">
-                    Emergency Afforestation support for crisis-affected regions
+                    Empowering local communities through sustainable forest management
                   </p>
                   <ul className="text-sm space-y-1">
-                    <li>• Rapid deployment protocols</li>
-                    <li>• Offline-capable solutions</li>
-                    <li>• Multi-language support</li>
-                    <li>• Coordination with aid organizations</li>
+                    <li>• Skill development programs</li>
+                    <li>• Sustainable harvesting techniques</li>
+                    <li>• Micro-enterprise development</li>
+                    <li>• Climate education initiatives</li>
                   </ul>
                 </CardContent>
               </Card>
@@ -384,11 +384,11 @@ const Partnerships = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Partnership Guidelines</CardTitle>
+                  <CardTitle className="text-lg">Carbon Sequestration Guide</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-gray-600 mb-4">
-                    Comprehensive guide for potential partners on collaboration models
+                    Comprehensive guide on high-CO2 absorbing plant species and cultivation techniques
                   </p>
                   <Button variant="outline" className="w-full gap-2">
                     <Download className="h-4 w-4" />
@@ -399,11 +399,26 @@ const Partnerships = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Technical Specifications</CardTitle>
+                  <CardTitle className="text-lg">Plant Selection Database</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-gray-600 mb-4">
-                    API documentation and integration requirements
+                    Detailed database of plants optimized for carbon sequestration by climate zone
+                  </p>
+                  <Button variant="outline" className="w-full gap-2">
+                    <Download className="h-4 w-4" />
+                    Download CSV
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Annual Impact Report 2024</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Report showcasing carbon sequestration achievements and partnership outcomes
                   </p>
                   <Button variant="outline" className="w-full gap-2">
                     <Download className="h-4 w-4" />
@@ -414,26 +429,11 @@ const Partnerships = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Impact Report 2024</CardTitle>
+                  <CardTitle className="text-lg">Urban Gardening Toolkit</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-gray-600 mb-4">
-                    Annual report showcasing partnership outcomes and impact
-                  </p>
-                  <Button variant="outline" className="w-full gap-2">
-                    <Download className="h-4 w-4" />
-                    Download PDF
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Training Materials</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Educational resources for partner organizations and staff
+                    Resources for maximizing carbon capture in urban and small-space environments
                   </p>
                   <Button variant="outline" className="w-full gap-2">
                     <Download className="h-4 w-4" />
@@ -444,11 +444,11 @@ const Partnerships = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Data Sharing Agreement</CardTitle>
+                  <CardTitle className="text-lg">Reforestation Manual</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-gray-600 mb-4">
-                    Legal framework for data collaboration and privacy protection
+                    Best practices for large-scale tree planting and ecosystem restoration
                   </p>
                   <Button variant="outline" className="w-full gap-2">
                     <Download className="h-4 w-4" />
@@ -459,11 +459,11 @@ const Partnerships = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Success Stories</CardTitle>
+                  <CardTitle className="text-lg">Community Success Stories</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-gray-600 mb-4">
-                    Case studies from successful partnership implementations
+                    Case studies from successful carbon sequestration projects worldwide
                   </p>
                   <Button variant="outline" className="w-full gap-2">
                     <Download className="h-4 w-4" />
@@ -478,9 +478,9 @@ const Partnerships = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <Card>
                 <CardHeader>
-                  <CardTitle>Partnership Inquiry</CardTitle>
+                  <CardTitle>Carbon Partnership Inquiry</CardTitle>
                   <CardDescription>
-                    Tell us about your organization and how we can collaborate
+                    Tell us about your organization and how we can collaborate on plant-based carbon initiatives
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -539,14 +539,14 @@ const Partnerships = () => {
                       <Textarea
                         value={contactForm.message}
                         onChange={(e) => setContactForm(prev => ({ ...prev, message: e.target.value }))}
-                        placeholder="Describe your partnership proposal, target regions, expected impact, and collaboration goals..."
+                        placeholder="Describe your carbon sequestration project, target regions, expected CO2 reduction, and collaboration goals..."
                         rows={6}
                         required
                       />
                     </div>
                     
                     <Button type="submit" className="w-full">
-                      Submit Partnership Inquiry
+                      Submit Carbon Partnership Inquiry
                     </Button>
                   </form>
                 </CardContent>
@@ -564,9 +564,9 @@ const Partnerships = () => {
                           <Users className="h-4 w-4 text-blue-600" />
                         </div>
                         <div>
-                          <h4 className="font-medium">Field Implementation</h4>
+                          <h4 className="font-medium">Urban Green Corridors</h4>
                           <p className="text-sm text-gray-600">
-                            Use Hedges Care for Professional Landscaping
+                            Establish carbon-capturing green spaces in cities
                           </p>
                         </div>
                       </div>
@@ -576,9 +576,9 @@ const Partnerships = () => {
                           <Globe className="h-4 w-4 text-green-600" />
                         </div>
                         <div>
-                          <h4 className="font-medium">Data Collaboration</h4>
+                          <h4 className="font-medium">Carbon Data Sharing</h4>
                           <p className="text-sm text-gray-600">
-                            Share Plants data to improve AI models
+                            Contribute to global carbon sequestration databases
                           </p>
                         </div>
                       </div>
@@ -588,9 +588,9 @@ const Partnerships = () => {
                           <Building2 className="h-4 w-4 text-purple-600" />
                         </div>
                         <div>
-                          <h4 className="font-medium">Research Partnership</h4>
+                          <h4 className="font-medium">Hybrid Plant Research</h4>
                           <p className="text-sm text-gray-600">
-                            Joint research on Eco-Friendly AI applications
+                            Develop high-efficiency carbon-capturing plant varieties
                           </p>
                         </div>
                       </div>
@@ -600,9 +600,9 @@ const Partnerships = () => {
                           <HandHeart className="h-4 w-4 text-orange-600" />
                         </div>
                         <div>
-                          <h4 className="font-medium">Funding & Grants</h4>
+                          <h4 className="font-medium">Climate Grants</h4>
                           <p className="text-sm text-gray-600">
-                            Co-apply for research and development funding
+                            Collaborate on carbon offset and climate adaptation funding
                           </p>
                         </div>
                       </div>

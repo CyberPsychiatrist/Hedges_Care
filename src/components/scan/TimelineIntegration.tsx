@@ -7,21 +7,27 @@ import { History } from "lucide-react";
 interface TimelineIntegrationProps {
   diagnosis: string | null;
   image: string | null;
+  plantData?: any;
+  confidence?: number;
 }
 
 const TimelineIntegration: React.FC<TimelineIntegrationProps> = ({
   diagnosis,
-  image
+  image,
+  plantData,
+  confidence
 }) => {
   const navigate = useNavigate();
 
   if (!diagnosis) return null;
 
   const handleTrackTimeline = () => {
-    navigate("/plant-timeline", { 
-      state: { 
+    navigate("/plant-timeline", {
+      state: {
         diagnosis,
-        image
+        image,
+        ...(plantData && { plantData }),
+        ...(confidence !== undefined && { confidence })
       }
     });
   };

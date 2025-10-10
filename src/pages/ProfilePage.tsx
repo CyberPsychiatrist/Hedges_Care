@@ -18,28 +18,88 @@ type ProfileActivity = {
   type: string;
   description: string;
   date: string;
+  environmentalImpact?: {
+    co2Absorbed: number;
+    plantsIdentified: number;
+    carbonSequestration: number;
+  };
+  location?: string;
 };
 
-// Sample activities data (would come from database in production)
+// Sample activities data reflecting environmental focus (would come from database in production)
 const sampleActivities: ProfileActivity[] = [
   {
     id: "act1",
-    type: "scan",
-    description: "Scanned tomato plant leaves",
-    date: "2023-05-15T10:30:00Z",
+    type: "plant-analysis",
+    description: "Analyzed Mango Tree - 52.5 kg CO₂/year absorption",
+    date: "2024-01-15T10:30:00Z",
+    location: "Nairobi, Kenya",
+    environmentalImpact: {
+      co2Absorbed: 52.5,
+      plantsIdentified: 1,
+      carbonSequestration: 0.144
+    }
   },
   {
     id: "act2",
-    type: "chat",
-    description: "Consulted with agricultural expert",
-    date: "2023-05-14T15:45:00Z",
+    type: "drone-analysis",
+    description: "Drone scan of 5-hectare area - Environmental mapping completed",
+    date: "2024-01-14T15:45:00Z",
+    location: "Mombasa, Kenya",
+    environmentalImpact: {
+      co2Absorbed: 265.8,
+      plantsIdentified: 15,
+      carbonSequestration: 0.729
+    }
   },
   {
     id: "act3",
-    type: "watch",
-    description: "Watched 'Organic Farming Techniques'",
-    date: "2023-05-12T09:15:00Z",
+    type: "expert-consultation",
+    description: "Consulted with Dr. Sarah Chen on carbon sequestration strategies",
+    date: "2024-01-13T09:15:00Z",
+    location: "Online",
+    environmentalImpact: {
+      co2Absorbed: 0,
+      plantsIdentified: 0,
+      carbonSequestration: 0
+    }
   },
+  {
+    id: "act4",
+    type: "plant-analysis",
+    description: "Analyzed Flame Tree - 51.0 kg CO₂/year absorption potential",
+    date: "2024-01-12T14:20:00Z",
+    location: "Kisumu, Kenya",
+    environmentalImpact: {
+      co2Absorbed: 51.0,
+      plantsIdentified: 1,
+      carbonSequestration: 0.140
+    }
+  },
+  {
+    id: "act5",
+    type: "location-search",
+    description: "Searched satellite data for Eldoret environmental analysis",
+    date: "2024-01-11T11:30:00Z",
+    location: "Eldoret, Kenya",
+    environmentalImpact: {
+      co2Absorbed: 0,
+      plantsIdentified: 0,
+      carbonSequestration: 0
+    }
+  },
+  {
+    id: "act6",
+    type: "plant-analysis",
+    description: "Analyzed Jacaranda Tree - 28.9 kg CO₂/year absorption",
+    date: "2024-01-10T16:45:00Z",
+    location: "Nakuru, Kenya",
+    environmentalImpact: {
+      co2Absorbed: 28.9,
+      plantsIdentified: 1,
+      carbonSequestration: 0.079
+    }
+  }
 ];
 
 const ProfilePage = () => {
@@ -301,15 +361,42 @@ const ProfilePage = () => {
                       {sampleActivities.map((activity) => (
                         <div key={activity.id} className="flex items-start gap-4 border-b border-gray-100 pb-4">
                           <div className={`rounded-full p-2 ${
-                            activity.type === 'scan' ? 'bg-green-100 text-green-600' : 
-                            activity.type === 'chat' ? 'bg-blue-100 text-blue-600' : 
+                            activity.type === 'plant-analysis' ? 'bg-green-100 text-green-600' :
+                            activity.type === 'drone-analysis' ? 'bg-blue-100 text-blue-600' :
+                            activity.type === 'expert-consultation' ? 'bg-purple-100 text-purple-600' :
+                            activity.type === 'location-search' ? 'bg-orange-100 text-orange-600' :
                             'bg-amber-100 text-amber-600'
                           }`}>
-                            {activity.type === 'scan' ? '📷' : activity.type === 'chat' ? '💬' : '📺'}
+                            {activity.type === 'plant-analysis' ? '🌳' :
+                             activity.type === 'drone-analysis' ? '🛰️' :
+                             activity.type === 'expert-consultation' ? '👨‍🔬' :
+                             activity.type === 'location-search' ? '🔍' :
+                             '📺'}
                           </div>
                           <div className="flex-1">
                             <p className="font-medium">{activity.description}</p>
-                            <p className="text-sm text-gray-500">{formatDate(activity.date)}</p>
+                            <div className="flex flex-wrap gap-4 text-sm text-gray-500 mt-1">
+                              <span>{formatDate(activity.date)}</span>
+                              {activity.location && (
+                                <span>📍 {activity.location}</span>
+                              )}
+                              {activity.environmentalImpact && (
+                                <span>🌍 {activity.environmentalImpact.co2Absorbed.toFixed(1)} kg CO₂/year</span>
+                              )}
+                            </div>
+                            {activity.environmentalImpact && (
+                              <div className="mt-2 grid grid-cols-3 gap-2 text-xs">
+                                <div className="bg-green-50 px-2 py-1 rounded">
+                                  <span className="text-green-700">Plants: {activity.environmentalImpact.plantsIdentified}</span>
+                                </div>
+                                <div className="bg-blue-50 px-2 py-1 rounded">
+                                  <span className="text-blue-700">Daily: {activity.environmentalImpact.carbonSequestration.toFixed(3)} kg</span>
+                                </div>
+                                <div className="bg-purple-50 px-2 py-1 rounded">
+                                  <span className="text-purple-700">SDG 15 Active</span>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
                       ))}

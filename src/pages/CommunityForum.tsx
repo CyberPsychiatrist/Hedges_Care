@@ -102,7 +102,7 @@ const CommunityForum: React.FC = () => {
         <Navigation activeTab={activeTab} setActiveTab={(tab) => setActiveTab(tab)} />
         <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center py-12">
-            <p className="text-xl text-green-700">Loading forum posts...</p>
+            <p className="text-xl text-green-700">Loading plant community discussions...</p>
           </div>
         </main>
         <FooterSection />
@@ -146,8 +146,8 @@ const CommunityForum: React.FC = () => {
                   </div>
                 ) : (
                   <div className="text-center py-12">
-                    <p className="text-xl text-green-700">No posts found matching your criteria</p>
-                    <p className="text-gray-600 mt-2">Try adjusting your search or category filters</p>
+                    <p className="text-xl text-green-700">No plant-focused posts found</p>
+                    <p className="text-gray-600 mt-2">Try adjusting your search, explore different categories, or start a new discussion about carbon sequestration, urban gardening, or reforestation!</p>
                   </div>
                 )}
               </div>
@@ -163,19 +163,23 @@ const CommunityForum: React.FC = () => {
                     <ul className="space-y-2 text-sm text-gray-700">
                       <li className="flex gap-2">
                         <span className="text-green-600 font-bold">•</span>
-                        <span>Be respectful and supportive of other community members</span>
+                        <span>Focus on sustainable gardening and environmental impact</span>
                       </li>
                       <li className="flex gap-2">
                         <span className="text-green-600 font-bold">•</span>
-                        <span>Use appropriate categories for your posts</span>
+                        <span>Share your CO2 absorption data and environmental measurements</span>
                       </li>
                       <li className="flex gap-2">
                         <span className="text-green-600 font-bold">•</span>
-                        <span>Include clear information when asking for help</span>
+                        <span>Ask about optimal plant selection for your climate zone</span>
                       </li>
                       <li className="flex gap-2">
                         <span className="text-green-600 font-bold">•</span>
-                        <span>Share your successes and what you've learned</span>
+                        <span>Discuss community reforestation and carbon offset projects</span>
+                      </li>
+                      <li className="flex gap-2">
+                        <span className="text-green-600 font-bold">•</span>
+                        <span>Share successful urban gardening techniques</span>
                       </li>
                     </ul>
                   </CardContent>

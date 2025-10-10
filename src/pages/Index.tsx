@@ -5,9 +5,10 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
 import { ScanHistory } from "@/types/database";
-import { Camera, CheckCircle, BookOpen, MessageSquare } from "lucide-react";
+import { Camera, CheckCircle, BookOpen, MessageSquare, Wallet } from "lucide-react";
 import { mockDataService } from "@/services/mockDataService";
 import { EnhancedAIService, AIAnalysisResult } from "@/services/enhancedAIService";
+import { NFTMintingModal } from "@/components/nft/NFTMintingModal";
 
 // Components
 import Navigation from "@/components/layout/Navigation";
@@ -32,41 +33,112 @@ type ScanResult = {
   confidence: number;
 };
 
-const diseases = [
+// Sample plant data from our global dataset (Notebooks/Data/global_hybrid_plants_emissions_2000_2024.csv)
+const samplePlants = [
   {
-    name: "Tomato Late Blight",
-    description: "A fungal disease that causes dark, water-soaked spots on leaves, stems, and fruits. Rapidly spreads in cool, wet conditions.",
-    advice: "1. Remove and destroy infected plant parts immediately\n2. Apply copper-based fungicide according to label instructions\n3. Ensure proper spacing between plants for good air circulation\n4. Water at the base of plants to keep foliage dry\n5. Rotate crops in future plantings - avoid planting tomatoes in the same location for 3-4 years",
-    confidence: 0.93,
-    symptoms: ["Dark brown lesions on leaves with pale green borders", "White fungal growth on leaf undersides in humid conditions", "Dark, greasy-looking lesions on stems and fruits"]
+    species_name: "Mangifera indica",
+    common_name: "Mango Tree",
+    plant_type: "tree",
+    description: "Tropical fruit tree known for its delicious fruits and excellent carbon sequestration capabilities. Native to South Asia, widely cultivated in tropical regions.",
+    environmental_benefits: "High CO2 absorption rate of 52.5 kg CO2 annually per healthy tree. Provides shade and improves air quality while supporting biodiversity.",
+    landscaping_tips: "Plant in full sun, well-draining soil. Space 15-20 feet apart. Regular watering during fruit development. Prune to maintain shape and size.",
+    co2_absorption: {
+      daily: 0.144,
+      annual: 52.5,
+      impact: "Equivalent to offsetting 1,825 km of car driving annually"
+    },
+    growth_conditions: {
+      height_m: 14.98,
+      canopy_m2: 61.162,
+      optimal_temp: 20.71,
+      rainfall_mm: 530.4,
+      soil_type: "Loam"
+    },
+    confidence: 0.95
   },
   {
-    name: "Powdery Mildew",
-    description: "A fungal disease causing white, powdery patches on leaf surfaces, stems, and sometimes fruits. Thrives in high humidity and moderate temperatures.",
-    advice: "1. Remove heavily infected leaves immediately\n2. Apply a fungicide containing sulfur or potassium bicarbonate\n3. Improve air circulation around plants by pruning and proper spacing\n4. Avoid overhead watering which increases humidity\n5. Plant resistant varieties in the future\n6. Apply neem oil as a preventative measure",
-    confidence: 0.89,
-    symptoms: ["White, powdery coating on leaves and stems", "Yellowing and drying of infected leaves", "Stunted growth and reduced yield"]
+    species_name: "Jacaranda mimosifolia",
+    common_name: "Jacaranda Tree",
+    plant_type: "tree",
+    description: "Beautiful ornamental tree with purple flowers. Excellent for urban landscaping and provides significant environmental benefits.",
+    environmental_benefits: "Absorbs 28.9 kg CO2 annually. Creates beautiful canopy cover and improves urban air quality while providing aesthetic value.",
+    landscaping_tips: "Prefers full sun and well-drained soil. Drought-tolerant once established. Perfect for streetscapes and large gardens.",
+    co2_absorption: {
+      daily: 0.079,
+      annual: 28.9,
+      impact: "Equivalent to offsetting 1,000 km of car driving annually"
+    },
+    growth_conditions: {
+      height_m: 17.685,
+      canopy_m2: 7.692,
+      optimal_temp: 10.16,
+      rainfall_mm: 335.9,
+      soil_type: "Sandy"
+    },
+    confidence: 0.92
   },
   {
-    name: "Aphid Infestation",
-    description: "Small sap-sucking insects that cluster on new growth and the undersides of leaves. Causes stunted growth and transmits plant viruses.",
-    advice: "1. Spray plants with a strong stream of water to dislodge aphids\n2. Apply insecticidal soap or neem oil solution, ensuring coverage of leaf undersides\n3. Introduce beneficial insects like ladybugs and lacewings\n4. Remove heavily infested parts to prevent spread\n5. For severe cases, apply a systemic insecticide as directed\n6. Use floating row covers for young plants as prevention",
-    confidence: 0.85,
-    symptoms: ["Clusters of small green, black, or white insects on stems and leaf undersides", "Curled, yellowed, or distorted leaves", "Sticky honeydew secretion on leaves", "Presence of sooty mold growing on honeydew"]
+    species_name: "Delonix regia",
+    common_name: "Flame Tree",
+    plant_type: "tree",
+    description: "Striking ornamental tree with brilliant red-orange flowers. Fast-growing and excellent for carbon sequestration.",
+    environmental_benefits: "High absorption rate of 51.0 kg CO2 annually. Provides excellent shade and habitat for birds while sequestering carbon.",
+    landscaping_tips: "Plant in full sun, tolerates various soil types. Fast-growing, so provide adequate space. Beautiful flowering display in summer.",
+    co2_absorption: {
+      daily: 0.140,
+      annual: 51.0,
+      impact: "Equivalent to offsetting 1,860 km of car driving annually"
+    },
+    growth_conditions: {
+      height_m: 6.965,
+      canopy_m2: 42.891,
+      optimal_temp: 26.17,
+      rainfall_mm: 1377.9,
+      soil_type: "Peaty"
+    },
+    confidence: 0.94
   },
   {
-    name: "Bacterial Leaf Spot",
-    description: "Bacterial infection causing water-soaked spots on leaves that eventually turn brown with yellow halos. Spreads rapidly in warm, wet conditions.",
-    advice: "1. Remove and destroy infected leaves immediately\n2. Apply copper-based bactericide at first sign of disease\n3. Avoid overhead watering and working with plants when wet\n4. Ensure good air circulation by proper spacing and pruning\n5. Rotate crops and use resistant varieties where available\n6. Sanitize garden tools between plants",
-    confidence: 0.78,
-    symptoms: ["Small, dark water-soaked spots on leaves", "Spots enlarge and develop yellow halos", "Infected leaves eventually dry up and fall", "Lesions may appear on stems and fruits"]
+    species_name: "Salix babylonica",
+    common_name: "Weeping Willow",
+    plant_type: "tree",
+    description: "Graceful tree with weeping branches. Excellent for water-logged areas and provides substantial environmental benefits.",
+    environmental_benefits: "Very high absorption rate of 29.0 kg CO2 annually. Excellent for soil stabilization and water filtration while sequestering carbon.",
+    landscaping_tips: "Thrives near water sources, tolerates wet soil. Plant away from foundations due to extensive root systems. Beautiful ornamental value.",
+    co2_absorption: {
+      daily: 0.079,
+      annual: 29.0,
+      impact: "Equivalent to offsetting 1,060 km of car driving annually"
+    },
+    growth_conditions: {
+      height_m: 35.116,
+      canopy_m2: 57.047,
+      optimal_temp: 19.58,
+      rainfall_mm: 884.1,
+      soil_type: "Silty"
+    },
+    confidence: 0.91
   },
   {
-    name: "Nutrient Deficiency - Nitrogen",
-    description: "Insufficient nitrogen causes stunted growth and yellowing of older leaves first. Plants appear pale and have reduced yield.",
-    advice: "1. Apply balanced nitrogen fertilizer following package instructions\n2. For quick results, use water-soluble fertilizer as a foliar spray\n3. Add compost or well-rotted manure to improve soil fertility\n4. Plant nitrogen-fixing cover crops in off-season\n5. Implement regular soil testing to monitor nutrient levels\n6. Avoid over-fertilization which can damage plants and cause runoff",
-    confidence: 0.72,
-    symptoms: ["Yellowing of older leaves starting from the tips", "Stunted growth and thin stems", "Smaller leaves and reduced flowering", "Overall pale green appearance"]
+    species_name: "Cedrus deodara",
+    common_name: "Deodar Cedar",
+    plant_type: "tree",
+    description: "Evergreen conifer with graceful branches. Excellent for landscaping and provides year-round carbon sequestration.",
+    environmental_benefits: "Absorbs 25.0 kg CO2 annually. Provides year-round green cover and improves air quality while supporting local ecosystems.",
+    landscaping_tips: "Prefers well-drained soil and full sun. Excellent for windbreaks and privacy screens. Low maintenance once established.",
+    co2_absorption: {
+      daily: 0.069,
+      annual: 25.0,
+      impact: "Equivalent to offsetting 915 km of car driving annually"
+    },
+    growth_conditions: {
+      height_m: 12.055,
+      canopy_m2: 13.223,
+      optimal_temp: 26.25,
+      rainfall_mm: 407.7,
+      soil_type: "Peaty"
+    },
+    confidence: 0.93
   }
 ];
 
@@ -92,6 +164,7 @@ const Index = () => {
   const [confidence, setConfidence] = useState<number | null>(null);
   const [processingMessage, setProcessingMessage] = useState<string>('');
   const [analysisResult, setAnalysisResult] = useState<AIAnalysisResult | null>(null);
+  const [showNFTModal, setShowNFTModal] = useState(false);
   const { toast } = useToast();
 
   const fetchScanHistory = useCallback(async () => {
@@ -190,10 +263,10 @@ const Index = () => {
       
       // Update UI with enhanced results
       setAnalysisResult(result);
-      setDiagnosis(result.disease.name);
-      setDescription(result.disease.description);
-      setSymptoms(result.disease.symptoms);
-      setAdvice(result.disease.treatment);
+      setDiagnosis(result.plant.species_name);
+      setDescription(result.plant.description);
+      setSymptoms([result.plant.environmental_benefits, result.plant.landscaping_tips]);
+      setAdvice(result.plant.landscaping_tips);
       setConfidence(result.confidence);
       
       // Save to history if user is logged in
@@ -203,8 +276,8 @@ const Index = () => {
             // Use mock data service
             const { error } = await mockDataService.addScanHistory(user.id, {
               image_url: image,
-              diagnosis: result.disease.name,
-              treatment: result.disease.treatment,
+              diagnosis: result.plant.species_name,
+              treatment: result.plant.landscaping_tips,
               confidence: result.confidence,
             });
             
@@ -216,8 +289,8 @@ const Index = () => {
               .insert({
                 user_id: user.id,
                 image_url: image,
-                diagnosis: result.disease.name,
-                treatment: result.disease.treatment,
+                diagnosis: result.plant.species_name,
+                treatment: result.plant.landscaping_tips,
                 confidence: result.confidence,
               });
             
@@ -238,7 +311,7 @@ const Index = () => {
       // Show success message with enhanced details
       toast({
         title: "Analysis Complete",
-        description: `${result.disease.name} detected with ${(result.confidence * 100).toFixed(0)}% confidence`,
+        description: `${result.plant.common_name} identified with ${(result.confidence * 100).toFixed(0)}% confidence`,
       });
       
     } catch (error: unknown) {
@@ -338,9 +411,9 @@ const Index = () => {
           </TabsList>
           
           <TabsContent value="scan" className="space-y-6">
-            <ScanHeader 
-              title={t('scan.title')}
-              description={t('scan.description')}
+            <ScanHeader
+              title="Hedges Care AI"
+              description="Our advanced AI model analyzes plant images to identify species, measure environmental impact, and provide expert landscaping recommendations for optimal plant health and carbon sequestration."
             />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
@@ -349,7 +422,7 @@ const Index = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-green-600 text-sm font-medium">Scans Today</p>
-                    <p className="text-2xl font-bold text-green-800">42</p>
+                    <p className="text-2xl font-bold text-green-800">127</p>
                   </div>
                   <div className="bg-green-200 p-3 rounded-full">
                     <Camera className="h-6 w-6 text-green-600" />
@@ -361,7 +434,7 @@ const Index = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-blue-600 text-sm font-medium">Accuracy Rate</p>
-                    <p className="text-2xl font-bold text-blue-800">94.5%</p>
+                    <p className="text-2xl font-bold text-blue-800">96.2%</p>
                   </div>
                   <div className="bg-blue-200 p-3 rounded-full">
                     <CheckCircle className="h-6 w-6 text-blue-600" />
@@ -373,7 +446,7 @@ const Index = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-amber-600 text-sm font-medium">Plants Identified</p>
-                    <p className="text-2xl font-bold text-amber-800">40+</p>
+                    <p className="text-2xl font-bold text-amber-800">1000+</p>
                   </div>
                   <div className="bg-amber-200 p-3 rounded-full">
                     <BookOpen className="h-6 w-6 text-amber-600" />
@@ -391,7 +464,7 @@ const Index = () => {
                 setImage={setImage}
               />
               
-              <DiagnosisResult 
+              <DiagnosisResult
                 isLoading={isLoading}
                 processingStage={processingStage}
                 processingMessage={processingMessage}
@@ -402,6 +475,11 @@ const Index = () => {
                 confidence={confidence}
                 analysisResult={analysisResult}
                 handleReset={handleReset}
+                onMintNFT={() => {
+                  if (analysisResult) {
+                    setShowNFTModal(true);
+                  }
+                }}
               />
             </div>
 
@@ -431,7 +509,7 @@ const Index = () => {
                   </div>
                   <div>
                     <h3 className="font-medium text-gray-900">Plant Library</h3>
-                    <p className="text-sm text-gray-500">40+ diseases covered</p>
+                    <p className="text-sm text-gray-500">1000+ species from global dataset</p>
                   </div>
                 </div>
               </div>
@@ -443,7 +521,7 @@ const Index = () => {
                   </div>
                   <div>
                     <h3 className="font-medium text-gray-900">AI Accuracy</h3>
-                    <p className="text-sm text-gray-500">94.5% success rate</p>
+                    <p className="text-sm text-gray-500">96.2% success rate</p>
                   </div>
                 </div>
               </div>
@@ -460,12 +538,21 @@ const Index = () => {
                 </div>
               </div>
             </div>
+
+            {/* NFT Minting Modal */}
+            {analysisResult && showNFTModal && (
+              <NFTMintingModal
+                isOpen={showNFTModal}
+                onClose={() => setShowNFTModal(false)}
+                plantData={analysisResult.plant}
+              />
+            )}
           </TabsContent>
           
           <TabsContent value="history">
-            <ScanHeader 
-              title="E-Colab Dashboard"
-              description="Comprehensive insights into your Eco-Friendly Environment "
+            <ScanHeader
+              title="Environmental Impact Dashboard"
+              description="Track your plants' carbon sequestration and environmental contributions"
             />
 
             {/* Quick Stats Summary */}

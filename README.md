@@ -278,10 +278,54 @@ Have ideas or questions? Reach out via Issues or Discussions.
    ```
 
 3. **Set up environment variables**
+    ```bash
+    cp .env.example .env.local
+    # Add your Supabase keys and other API keys
+    ```
+
+4. **Environment Configuration**
+   
+   Copy the example environment file and configure your environment variables:
+   
    ```bash
    cp .env.example .env.local
-   # Add your Supabase keys and other API keys
    ```
+   
+   Then edit the `.env.local` file with your specific values:
+   
+   ```env
+   # NFT Configuration
+   VITE_NFT_CONTRACT_ADDRESS=0x1234567890123456789012345678901234567890
+   VITE_BLOCKCHAIN_CHAIN_ID=137
+   VITE_MOCK_CURRENCY=ETH
+   
+   # Supabase Configuration
+   VITE_SUPABASE_URL=https://your-project.supabase.co
+   VITE_SUPABASE_PUBLISHABLE_KEY=your-supabase-publishable-key
+   
+   # Sidebar Configuration
+   VITE_SIDEBAR_COOKIE_NAME=sidebar:state
+   VITE_SIDEBAR_COOKIE_MAX_AGE=604800
+   VITE_SIDEBAR_WIDTH=16rem
+   VITE_SIDEBAR_WIDTH_MOBILE=18rem
+   VITE_SIDEBAR_WIDTH_ICON=3rem
+   VITE_SIDEBAR_KEYBOARD_SHORTCUT=b
+   
+   # YouTube Configuration
+   VITE_YOUTUBE_BASE_URL=https://www.youtube.com
+   VITE_YOUTUBE_EMBED_URL=https://www.youtube.com/embed
+   
+   # M-Pesa Configuration
+   VITE_MPESA_PAYMENT_TIMEOUT=5000
+   VITE_MPESA_PREFIX=MP
+   ```
+
+   **Environment Variables Explanation:**
+   - **NFT Configuration**: Required for NFT functionality and blockchain interactions
+   - **Supabase Configuration**: Essential for database, authentication, and backend services
+   - **Sidebar Configuration**: Customizes the sidebar behavior and appearance
+   - **YouTube Configuration**: For video tutorial integration
+   - **M-Pesa Configuration**: Payment processing for African markets
 
 4. **Run the development server**
    ```bash
@@ -318,7 +362,7 @@ We welcome all kinds of contributions from the community! 🌍 Whether you're a 
 2. 👯 **Clone** your fork:
    ```bash
    git clone https://github.com/CyberPsychiatrist/Hedges_Care.git
-   cd hedges-care
+   cd Hedges-Care
    ```
 3. 🌱 **Create a feature branch**:
    ```bash

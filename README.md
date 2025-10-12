@@ -215,7 +215,7 @@ function calculateCO2Absorption(plant: PlantCO2Data): {
 
 **Experience Hedges Care in action!**
 
-🚀 **Live Demo URL**: [https://your-demo-url.com](https://your-demo-url.com)
+🚀 **Live Demo URL**: [https://your-demo-url.com](https://hedges-care.vercel.app/)
 
 **Demo Features Available:**
 - ✅ Plant disease detection demo
@@ -224,7 +224,7 @@ function calculateCO2Absorption(plant: PlantCO2Data): {
 - ✅ Environmental impact dashboard
 - ✅ Mobile-responsive interface
 
-**Try it now**: [👉 Launch Live Demo](https://your-demo-url.com)
+**Try it now**: [👉 Launch Live Demo](https://hedges-care.vercel.app/)
 
 ---
 
@@ -333,7 +333,7 @@ Have ideas or questions? Reach out via Issues or Discussions.
    ```
 
 5. **Open your browser**
-   Visit [http://localhost:5173](http://localhost:5173)
+   Visit [http://localhost:8080](http://localhost:8080)
 
 ---
 

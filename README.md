@@ -181,9 +181,11 @@ function calculateCO2Absorption(plant: PlantCO2Data): {
 ## 📸 Screenshots
 
 <div align="center">
-  <img src="public/screenshots/main-interface.png" alt="Main Interface" width="300"/>
+  <img src="public/screenshots/timeline.png" alt="timeline Interface" width="300"/>
   <img src="public/screenshots/scan-result.png" alt="Scan Result" width="300"/>
   <img src="public/screenshots/co2-dashboard.png" alt="CO2 Dashboard" width="300"/>
+  <img src="public/screenshots/nft.png" alt="CO2 Dashboard" width="300"/>
+</div>
 </div>
 
 **Screenshot Gallery:**

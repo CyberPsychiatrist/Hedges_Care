@@ -16,7 +16,7 @@ const MPESA_CONSUMER_KEY = Deno.env.get("MPESA_CONSUMER_KEY") || "";
 const MPESA_CONSUMER_SECRET = Deno.env.get("MPESA_CONSUMER_SECRET") || "";
 const MPESA_PASSKEY = Deno.env.get("MPESA_PASSKEY") || "";
 const MPESA_SHORTCODE = Deno.env.get("MPESA_SHORTCODE") || "174379"; // Default test shortcode
-const CALLBACK_URL = Deno.env.get("MPESA_CALLBACK_URL") || "https://bswtctukvtnigbqmccpg.functions.supabase.co/mpesa-callback";
+const CALLBACK_URL = Deno.env.get("MPESA_CALLBACK_URL") || "https://ezlpixphjjvbjsclsomp.functions.supabase.co/mpesa-callback";
 
 console.log("M-Pesa STK Push Function Initialized");
 

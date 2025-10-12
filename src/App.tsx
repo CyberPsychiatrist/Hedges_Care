@@ -137,7 +137,9 @@ const App = () => {
                     } />
                     <Route path="/nft-gallery" element={
                       <PageTransition>
-                        <NFTGallery />
+                        <RequireAuth>
+                          <NFTGallery />
+                        </RequireAuth>
                       </PageTransition>
                     } />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

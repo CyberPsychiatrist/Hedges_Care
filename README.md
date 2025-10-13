@@ -234,7 +234,7 @@ function calculateCO2Absorption(plant: PlantCO2Data): {
 
 **Presenting Hedges Care to stakeholders and partners:**
 
-📊 **Pitch Deck URL**: [https://gamma.app/docs/Hedges-Care-Revolutionizing-Plant-Health-and-Carbon-Sequestration-Throug](https://gamma.app/docs/Hedges-Care-Revolutionizing-Plant-Health-and-Carbon-Sequestration-Throug)
+📊 **Pitch Deck URL**: [https://www.canva.com/design/DAG1naT9Sfw/PNFw3H0qgwgyD86gc1OWQQ/view?utm_content=DAG1naT9Sfw&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=had42865723](https://www.canva.com/design/DAG1naT9Sfw/PNFw3H0qgwgyD86gc1OWQQ/view?utm_content=DAG1naT9Sfw&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=had42865723)
 
 **Key Pitch Points:**
 - 🌍 **Market Opportunity**: $15B global landscaping market with growing environmental awareness

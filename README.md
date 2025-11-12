@@ -186,8 +186,7 @@ function calculateCO2Absorption(plant: PlantCO2Data): {
   <img src="public/screenshots/co2-dashboard.png" alt="CO2 Dashboard" width="300"/>
   <img src="public/screenshots/nft.png" alt="NFT Dashboard" width="300"/>
   <img src="public/screenshots/database_schema.png" alt="Database Schema" width="300"/>
-</div>
-</div>
+  </div>
 
 **Screenshot Gallery:**
 
@@ -199,6 +198,66 @@ function calculateCO2Absorption(plant: PlantCO2Data): {
 - 📱 **Mobile Interface** – Full functionality on your smartphone
 - 📊 **Database Schema** – Visual representation of the database structure
 - 🌍 **Environmental Impact Report** – Detailed analysis of your contribution to SDG 15
+
+## 🗄️ Database Schema
+
+The Hedges Care platform uses a PostgreSQL database with Supabase, supporting plant health tracking, e-commerce, and community features.
+
+### 📊 Entity-Relationship Diagram
+
+For a comprehensive visual representation of the database relationships, see the [Database ER Diagram](database_diagram.md).
+
+### Core Tables
+
+**User Management**
+- `auth.users` - User authentication profiles
+- `profiles` - User profile information
+
+**Plant & Environmental**
+- `plants` - Species data with CO2 metrics
+- `scan_history` - AI diagnosis results
+- `weather_data` - Local weather for care recommendations
+
+**E-commerce (Plant Store)**
+- `store_products` - Plants with pricing and care details
+- `shopping_cart_items` - User cart storage
+- `orders` - Complete order information
+- `order_items` - Individual order items
+- `product_reviews` - Customer reviews with images
+- `product_categories` - Plant categories
+- `product_images` - Multiple product images
+
+**Community & Social**
+- `forum_posts` - Community discussions
+- `forum_comments` - Post comments
+- `forum_likes` - User engagement
+
+**NFT & Blockchain**
+- `plant_nfts` - Minted plant NFTs
+- `nft_collections` - NFT collection data
+- `plant_timeline` - User plant history
+- `nft_trades` - Historical NFT trade data
+- `nft_listings` - Current NFT listings for sale
+
+**Professional Services**
+- `plant_specialists` - Landscaping professionals
+- `specialist_consultations` - Booked sessions
+
+**Payment System**
+- `mpesa_transactions` - M-Pesa payment transaction data
+
+### Database Features
+
+- **Row Level Security (RLS)** - Data isolation per user
+- **Automatic Timestamps** - Managed by triggers
+- **Performance Indexing** - Optimized queries
+- **Sample Data** - 12 plant varieties included
+- **Views** - Pre-computed views for common queries
+- **Constraints** - Data integrity through CHECK constraints
+
+### Setup
+
+Run the schema queries from [`database_schema_queries.txt`](database_schema_queries.txt:1) to create all tables, indexes, triggers, and sample data.
 
 ---
 

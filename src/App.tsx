@@ -17,6 +17,8 @@ import VideoLibrary from "./pages/VideoLibrary";
 import ProfilePage from "./pages/ProfilePage";
 import Subscription from "./pages/Subscription";
 import PlantTimeline from "./pages/PlantTimeline";
+import CartPage from "./pages/CartPage";
+import PlantStore from "./pages/PlantStore";
 import { AuthProvider } from "./components/AuthProvider";
 import { RequireAuth } from "./components/RequireAuth";
 import { NotificationProvider } from "./components/NotificationProvider";
@@ -72,6 +74,11 @@ const App = () => {
                         <RequireAuth>
                           <Index />
                         </RequireAuth>
+                      </PageTransition>
+                    } />
+                    <Route path="/plant-store" element={
+                      <PageTransition>
+                        <PlantStore />
                       </PageTransition>
                     } />
                     <Route path="/about" element={
@@ -140,6 +147,11 @@ const App = () => {
                         <RequireAuth>
                           <NFTGallery />
                         </RequireAuth>
+                      </PageTransition>
+                    } />
+                    <Route path="/cart" element={
+                      <PageTransition>
+                        <CartPage />
                       </PageTransition>
                     } />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

@@ -185,6 +185,7 @@ function calculateCO2Absorption(plant: PlantCO2Data): {
   <img src="public/screenshots/scan-result.png" alt="Scan Result" width="300"/>
   <img src="public/screenshots/co2-dashboard.png" alt="CO2 Dashboard" width="300"/>
   <img src="public/screenshots/nft.png" alt="CO2 Dashboard" width="300"/>
+  <img src="public/screenshots/database_schema.png" alt="CO2 Dashboard" width="300"/>
 </div>
 </div>
 
@@ -196,6 +197,7 @@ function calculateCO2Absorption(plant: PlantCO2Data): {
 - 👨‍🔬 **Expert Consultations** – Connect with landscaping professionals
 - 🌳 **Plant Health Timeline** – Monitor improvements and environmental impact
 - 📱 **Mobile Interface** – Full functionality on your smartphone
+- 📊 **Database Schema** – Configuration on the database
 - 🌍 **Environmental Impact Report** – Detailed analysis of your contribution to SDG 15
 
 ---
@@ -217,7 +219,7 @@ function calculateCO2Absorption(plant: PlantCO2Data): {
 
 **Experience Hedges Care in action!**
 
-🚀 **Live Demo URL**: [https://your-demo-url.com](https://hedges-care.vercel.app/)
+🚀 **Live Demo URL**: [https://hedges-care.vercel.app/]
 
 **Demo Features Available:**
 - ✅ Plant disease detection demo

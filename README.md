@@ -184,8 +184,8 @@ function calculateCO2Absorption(plant: PlantCO2Data): {
   <img src="public/screenshots/timeline.png" alt="timeline Interface" width="300"/>
   <img src="public/screenshots/scan-result.png" alt="Scan Result" width="300"/>
   <img src="public/screenshots/co2-dashboard.png" alt="CO2 Dashboard" width="300"/>
-  <img src="public/screenshots/nft.png" alt="CO2 Dashboard" width="300"/>
-  <img src="public/screenshots/database_schema.png" alt="CO2 Dashboard" width="300"/>
+  <img src="public/screenshots/nft.png" alt="NFT Dashboard" width="300"/>
+  <img src="public/screenshots/database_schema.png" alt="Database Schema" width="300"/>
 </div>
 </div>
 
@@ -197,8 +197,55 @@ function calculateCO2Absorption(plant: PlantCO2Data): {
 - 👨‍🔬 **Expert Consultations** – Connect with landscaping professionals
 - 🌳 **Plant Health Timeline** – Monitor improvements and environmental impact
 - 📱 **Mobile Interface** – Full functionality on your smartphone
-- 📊 **Database Schema** – Configuration on the database
+- 📊 **Database Schema** – Visual representation of the database structure
 - 🌍 **Environmental Impact Report** – Detailed analysis of your contribution to SDG 15
+
+---
+
+## 🗄️ Database Schema
+
+The Hedges Care platform uses a PostgreSQL database with Supabase, supporting plant health tracking, e-commerce, and community features.
+
+### Core Tables
+
+**Plant & Environmental**
+- `plants` - Species data with CO2 metrics
+- `scan_history` - AI diagnosis results
+- `weather_data` - Local weather for care recommendations
+
+**E-commerce (Plant Store)**
+- `store_products` - Plants with pricing and care details
+- `shopping_cart_items` - User cart storage
+- `orders` - Complete order information
+- `order_items` - Individual order items
+- `product_reviews` - Customer reviews with images
+- `product_categories` - Plant categories
+- `product_images` - Multiple product images
+
+**Community & Social**
+- `forum_posts` - Community discussions
+- `forum_comments` - Post comments
+- `forum_likes` - User engagement
+
+**NFT & Blockchain**
+- `plant_nfts` - Minted plant NFTs
+- `nft_collections` - NFT collection data
+- `plant_timeline` - User plant history
+
+**Professional Services**
+- `plant_specialists` - Landscaping professionals
+- `specialist_consultations` - Booked sessions
+
+### Database Features
+
+- **Row Level Security (RLS)** - Data isolation per user
+- **Automatic Timestamps** - Managed by triggers
+- **Performance Indexing** - Optimized queries
+- **Sample Data** - 12 plant varieties included
+
+### Setup
+
+Run the schema queries from [`database_schema_queries.txt`](database_schema_queries.txt:1) to create all tables, indexes, triggers, and sample data.
 
 ---
 

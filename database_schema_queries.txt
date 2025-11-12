@@ -1,0 +1,1012 @@
+-- ================================================================
+-- DATABASE SCHEMA SQL QUERIES FOR HEDGES CARE PROJECT
+-- ================================================================
+
+-- This file contains all SQL queries required to create the database tables
+-- for the Hedges Care project. These queries are based on the TypeScript
+-- type definitions found in src/types/ directory.
+
+-- Table 1: User Profiles
+-- Stores user information and profile data
+CREATE TABLE IF NOT EXISTS profiles (
+    id UUID REFERENCES auth.users(id) PRIMARY KEY,
+    username TEXT UNIQUE,
+    full_name TEXT,
+    avatar_url TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS (Row Level Security) for profiles table
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+
+-- Table 2: Plant Library
+-- Stores information about different plant species
+CREATE TABLE IF NOT EXISTS plants (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    species_name TEXT NOT NULL,
+    common_name TEXT NOT NULL,
+    plant_type TEXT NOT NULL,
+    description TEXT,
+    region TEXT,
+    country TEXT,
+    height_m NUMERIC,
+    canopy_m2 NUMERIC,
+    wood_density_g_cm3 NUMERIC,
+    agb_kg NUMERIC, -- Above Ground Biomass
+    bgb_kg NUMERIC, -- Below Ground Biomass
+    carbon_storage_kg NUMERIC,
+    total_CO2eq_stored_kg NUMERIC,
+    annual_C_kg NUMERIC,
+    annual_CO2_kg NUMERIC,
+    annual_growth_rate_pct NUMERIC,
+    co2_absorption_change_rate_pct NUMERIC,
+    mortality_rate NUMERIC,
+    leaf_area_index NUMERIC,
+    root_depth_m NUMERIC,
+    mean_temp_C NUMERIC,
+    annual_rainfall_mm NUMERIC,
+    soil_type TEXT,
+    soil_carbon_percent NUMERIC,
+    altitude_m NUMERIC,
+    iucn_status TEXT,
+    biodiversity_value NUMERIC,
+    habitat_loss_percent NUMERIC,
+    protected_area_presence NUMERIC,
+    invasive_risk_score NUMERIC,
+    maintenance_cost_usd_per_year NUMERIC,
+    co2_absorption_impact TEXT,
+    optimal_conditions TEXT,
+    landscaping_uses TEXT[],
+    environmental_benefits TEXT[],
+    care_instructions TEXT[],
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS for plants table
+ALTER TABLE plants ENABLE ROW LEVEL SECURITY;
+
+-- Table 3: Scan History
+-- Stores plant scan/diagnosis results
+CREATE TABLE IF NOT EXISTS scan_history (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users(id) NOT NULL,
+    image_url TEXT NOT NULL,
+    diagnosis TEXT,
+    treatment TEXT,
+    confidence NUMERIC,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS for scan_history table
+ALTER TABLE scan_history ENABLE ROW LEVEL SECURITY;
+
+-- Table 4: Forum Posts
+-- Stores community forum posts
+CREATE TABLE IF NOT EXISTS forum_posts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title TEXT NOT NULL,
+    content TEXT NOT NULL,
+    author_id UUID REFERENCES auth.users(id) NOT NULL,
+    author_name TEXT NOT NULL,
+    author_avatar TEXT,
+    tags TEXT[],
+    likes_count INTEGER DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS for forum_posts table
+ALTER TABLE forum_posts ENABLE ROW LEVEL SECURITY;
+
+-- Table 5: Forum Comments
+-- Stores comments on forum posts
+CREATE TABLE IF NOT EXISTS forum_comments (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    post_id UUID REFERENCES forum_posts(id) ON DELETE CASCADE NOT NULL,
+    author_id UUID REFERENCES auth.users(id) NOT NULL,
+    author_name TEXT NOT NULL,
+    author_avatar TEXT,
+    content TEXT NOT NULL,
+    likes_count INTEGER DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS for forum_comments table
+ALTER TABLE forum_comments ENABLE ROW LEVEL SECURITY;
+
+-- Table 6: Forum Likes
+-- Stores likes on forum posts and comments
+CREATE TABLE IF NOT EXISTS forum_likes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users(id) NOT NULL,
+    post_id UUID REFERENCES forum_posts(id) ON DELETE CASCADE,
+    comment_id UUID REFERENCES forum_comments(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS for forum_likes table
+ALTER TABLE forum_likes ENABLE ROW LEVEL SECURITY;
+
+-- Table 7: Plant NFTs
+-- Stores information about minted plant NFTs
+CREATE TABLE IF NOT EXISTS plant_nfts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    token_id TEXT NOT NULL UNIQUE,
+    name TEXT NOT NULL,
+    description TEXT NOT NULL,
+    image_url TEXT NOT NULL,
+    species_name TEXT NOT NULL,
+    common_name TEXT NOT NULL,
+    plant_type TEXT NOT NULL,
+    
+    -- Environmental Impact Data
+    co2_absorbed_annual NUMERIC,
+    co2_absorbed_daily NUMERIC,
+    canopy_area NUMERIC,
+    height NUMERIC,
+    location TEXT,
+    
+    -- Metadata
+    confidence NUMERIC,
+    scan_date TIMESTAMPTZ,
+    optimal_temp NUMERIC,
+    rainfall NUMERIC,
+    soil_type TEXT,
+    health_score NUMERIC,
+    rarity TEXT CHECK (rarity IN ('common', 'uncommon', 'rare', 'epic', 'legendary')),
+    
+    -- Ownership
+    owner_address TEXT NOT NULL,
+    creator_address TEXT NOT NULL,
+    mint_date TIMESTAMPTZ DEFAULT NOW(),
+    last_transfer_date TIMESTAMPTZ,
+    
+    -- Blockchain Data
+    contract_address TEXT NOT NULL,
+    chain_id TEXT NOT NULL,
+    transaction_hash TEXT NOT NULL,
+    block_number INTEGER,
+    
+    -- Status
+    status TEXT DEFAULT 'minted' CHECK (status IN ('minting', 'minted', 'listed', 'transferred', 'burned')),
+    
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    
+    -- User association
+    user_id UUID REFERENCES auth.users(id)
+);
+
+-- Enable RLS for plant_nfts table
+ALTER TABLE plant_nfts ENABLE ROW LEVEL SECURITY;
+
+-- Table 8: NFT Collections
+-- Stores information about NFT collections
+CREATE TABLE IF NOT EXISTS nft_collections (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL,
+    description TEXT,
+    total_supply INTEGER DEFAULT 0,
+    minted_count INTEGER DEFAULT 0,
+    floor_price NUMERIC DEFAULT 0,
+    average_price NUMERIC DEFAULT 0,
+    total_volume NUMERIC DEFAULT 0,
+    image_url TEXT,
+    contract_address TEXT NOT NULL UNIQUE,
+    owner_address TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS for nft_collections table
+ALTER TABLE nft_collections ENABLE ROW LEVEL SECURITY;
+
+-- Table 9: NFT Trades
+-- Stores historical NFT trade data
+CREATE TABLE IF NOT EXISTS nft_trades (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    token_id TEXT NOT NULL,
+    from_address TEXT NOT NULL,
+    to_address TEXT NOT NULL,
+    price NUMERIC NOT NULL,
+    currency TEXT NOT NULL,
+    timestamp TIMESTAMPTZ DEFAULT NOW(),
+    transaction_hash TEXT NOT NULL,
+    marketplace_fee NUMERIC DEFAULT 0
+);
+
+-- Enable RLS for nft_trades table
+ALTER TABLE nft_trades ENABLE ROW LEVEL SECURITY;
+
+-- Table 10: NFT Marketplace Listings
+-- Stores current NFT listings for sale
+CREATE TABLE IF NOT EXISTS nft_listings (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    nft_id UUID REFERENCES plant_nfts(id) ON DELETE CASCADE NOT NULL,
+    token_id TEXT NOT NULL,
+    seller_address TEXT NOT NULL,
+    price NUMERIC NOT NULL,
+    currency TEXT NOT NULL DEFAULT 'USD',
+    expiration_date TIMESTAMPTZ NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    is_active BOOLEAN DEFAULT true
+);
+
+-- Enable RLS for nft_listings table
+ALTER TABLE nft_listings ENABLE ROW LEVEL SECURITY;
+
+-- Table 11: User Plant Timeline
+-- Stores user's plant care timeline entries
+CREATE TABLE IF NOT EXISTS plant_timeline (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users(id) NOT NULL,
+    plant_nft_id UUID REFERENCES plant_nfts(id),
+    plant_name TEXT NOT NULL,
+    action TEXT NOT NULL,
+    notes TEXT,
+    image_url TEXT,
+    date TIMESTAMPTZ DEFAULT NOW(),
+    metadata JSONB DEFAULT '{}'
+);
+
+-- Enable RLS for plant_timeline table
+ALTER TABLE plant_timeline ENABLE ROW LEVEL SECURITY;
+
+-- Table 12: Weather Data
+-- Stores weather information for plant care recommendations
+CREATE TABLE IF NOT EXISTS weather_data (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    location TEXT NOT NULL,
+    current_temp_c NUMERIC,
+    current_condition TEXT,
+    current_wind_kph NUMERIC,
+    current_humidity NUMERIC,
+    current_precip_mm NUMERIC,
+    forecast_date DATE,
+    max_temp_c NUMERIC,
+    min_temp_c NUMERIC,
+    forecast_condition TEXT,
+    daily_chance_of_rain NUMERIC,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS for weather_data table
+ALTER TABLE weather_data ENABLE ROW LEVEL SECURITY;
+
+-- Table 13: Plant Care Specialists
+-- Stores information about plant care specialists
+CREATE TABLE IF NOT EXISTS plant_specialists (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users(id) UNIQUE,
+    specialty TEXT NOT NULL,
+    experience_years INTEGER,
+    qualification TEXT,
+    bio TEXT,
+    avatar_url TEXT,
+    rating NUMERIC DEFAULT 0 CHECK (rating >= 0 AND rating <= 5),
+    consultation_fee NUMERIC,
+    is_available BOOLEAN DEFAULT true,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS for plant_specialists table
+ALTER TABLE plant_specialists ENABLE ROW LEVEL SECURITY;
+
+-- Table 14: Specialist Consultations
+-- Stores consultation bookings and sessions
+CREATE TABLE IF NOT EXISTS specialist_consultations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users(id) NOT NULL,
+    specialist_id UUID REFERENCES plant_specialists(id) NOT NULL,
+    plant_nft_id UUID REFERENCES plant_nfts(id),
+    status TEXT DEFAULT 'scheduled' CHECK (status IN ('scheduled', 'in_progress', 'completed', 'cancelled')),
+    scheduled_at TIMESTAMPTZ NOT NULL,
+    duration_minutes INTEGER DEFAULT 30,
+    notes TEXT,
+    call_url TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS for specialist_consultations table
+ALTER TABLE specialist_consultations ENABLE ROW LEVEL SECURITY;
+
+-- Table 15: Mpesa Payment Transactions
+-- Stores Mpesa payment transaction data
+CREATE TABLE IF NOT EXISTS mpesa_transactions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users(id) NOT NULL,
+    phone_number TEXT NOT NULL,
+    amount NUMERIC NOT NULL,
+    currency TEXT DEFAULT 'KES',
+    reference_number TEXT UNIQUE,
+    transaction_date TIMESTAMPTZ,
+    status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'success', 'failed', 'cancelled')),
+    description TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS for mpesa_transactions table
+ALTER TABLE mpesa_transactions ENABLE ROW LEVEL SECURITY;
+
+-- Indexes for better performance
+CREATE INDEX IF NOT EXISTS idx_plants_species_name ON plants(species_name);
+CREATE INDEX IF NOT EXISTS idx_plants_plant_type ON plants(plant_type);
+CREATE INDEX IF NOT EXISTS idx_scan_history_user_id ON scan_history(user_id);
+CREATE INDEX IF NOT EXISTS idx_scan_history_created_at ON scan_history(created_at);
+CREATE INDEX IF NOT EXISTS idx_forum_posts_author_id ON forum_posts(author_id);
+CREATE INDEX IF NOT EXISTS idx_forum_posts_created_at ON forum_posts(created_at);
+CREATE INDEX IF NOT EXISTS idx_forum_comments_post_id ON forum_comments(post_id);
+CREATE INDEX IF NOT EXISTS idx_forum_comments_author_id ON forum_comments(author_id);
+CREATE INDEX IF NOT EXISTS idx_forum_likes_user_id ON forum_likes(user_id);
+CREATE INDEX IF NOT EXISTS idx_forum_likes_post_id ON forum_likes(post_id);
+CREATE INDEX IF NOT EXISTS idx_forum_likes_comment_id ON forum_likes(comment_id);
+CREATE INDEX IF NOT EXISTS idx_plant_nfts_user_id ON plant_nfts(user_id);
+CREATE INDEX IF NOT EXISTS idx_plant_nfts_owner_address ON plant_nfts(owner_address);
+CREATE INDEX IF NOT EXISTS idx_plant_nfts_status ON plant_nfts(status);
+CREATE INDEX IF NOT EXISTS idx_nft_listings_nft_id ON nft_listings(nft_id);
+CREATE INDEX IF NOT EXISTS idx_nft_listings_is_active ON nft_listings(is_active);
+CREATE INDEX IF NOT EXISTS idx_plant_timeline_user_id ON plant_timeline(user_id);
+CREATE INDEX IF NOT EXISTS idx_plant_timeline_date ON plant_timeline(date);
+CREATE INDEX IF NOT EXISTS idx_weather_data_location ON weather_data(location);
+CREATE INDEX IF NOT EXISTS idx_weather_data_date ON weather_data(forecast_date);
+CREATE INDEX IF NOT EXISTS idx_specialist_consultations_user_id ON specialist_consultations(user_id);
+CREATE INDEX IF NOT EXISTS idx_specialist_consultations_specialist_id ON specialist_consultations(specialist_id);
+CREATE INDEX IF NOT EXISTS idx_specialist_consultations_status ON specialist_consultations(status);
+CREATE INDEX IF NOT EXISTS idx_mpesa_transactions_user_id ON mpesa_transactions(user_id);
+CREATE INDEX IF NOT EXISTS idx_mpesa_transactions_phone_number ON mpesa_transactions(phone_number);
+CREATE INDEX IF NOT EXISTS idx_mpesa_transactions_status ON mpesa_transactions(status);
+
+-- Functions for updating timestamps automatically
+CREATE OR REPLACE FUNCTION handle_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Triggers for automatic timestamp updates
+DROP TRIGGER IF EXISTS handle_profiles_updated_at ON profiles;
+CREATE TRIGGER handle_profiles_updated_at
+    BEFORE UPDATE ON profiles
+    FOR EACH ROW
+    EXECUTE FUNCTION handle_updated_at();
+
+DROP TRIGGER IF EXISTS handle_forum_posts_updated_at ON forum_posts;
+CREATE TRIGGER handle_forum_posts_updated_at
+    BEFORE UPDATE ON forum_posts
+    FOR EACH ROW
+    EXECUTE FUNCTION handle_updated_at();
+
+DROP TRIGGER IF EXISTS handle_forum_comments_updated_at ON forum_comments;
+CREATE TRIGGER handle_forum_comments_updated_at
+    BEFORE UPDATE ON forum_comments
+    FOR EACH ROW
+    EXECUTE FUNCTION handle_updated_at();
+
+DROP TRIGGER IF EXISTS handle_plants_updated_at ON plants;
+CREATE TRIGGER handle_plants_updated_at
+    BEFORE UPDATE ON plants
+    FOR EACH ROW
+    EXECUTE FUNCTION handle_updated_at();
+
+DROP TRIGGER IF EXISTS handle_plant_nfts_updated_at ON plant_nfts;
+CREATE TRIGGER handle_plant_nfts_updated_at
+    BEFORE UPDATE ON plant_nfts
+    FOR EACH ROW
+    EXECUTE FUNCTION handle_updated_at();
+
+DROP TRIGGER IF EXISTS handle_nft_collections_updated_at ON nft_collections;
+CREATE TRIGGER handle_nft_collections_updated_at
+    BEFORE UPDATE ON nft_collections
+    FOR EACH ROW
+    EXECUTE FUNCTION handle_updated_at();
+
+DROP TRIGGER IF EXISTS handle_specialist_consultations_updated_at ON specialist_consultations;
+CREATE TRIGGER handle_specialist_consultations_updated_at
+    BEFORE UPDATE ON specialist_consultations
+    FOR EACH ROW
+    EXECUTE FUNCTION handle_updated_at();
+
+DROP TRIGGER IF EXISTS handle_mpesa_transactions_updated_at ON mpesa_transactions;
+CREATE TRIGGER handle_mpesa_transactions_updated_at
+    BEFORE UPDATE ON mpesa_transactions
+    FOR EACH ROW
+    EXECUTE FUNCTION handle_updated_at();
+
+-- Create views for common data queries
+
+-- View: User Plant Portfolio
+-- Shows all NFTs owned by a user
+CREATE OR REPLACE VIEW user_plant_portfolio AS
+SELECT
+    u.id as user_id,
+    u.email,
+    pn.id as nft_id,
+    pn.name,
+    pn.common_name,
+    pn.species_name,
+    pn.image_url,
+    pn.rarity,
+    pn.health_score,
+    pn.mint_date,
+    pn.owner_address,
+    nc.name as collection_name
+FROM auth.users u
+LEFT JOIN plant_nfts pn ON pn.user_id = u.id
+LEFT JOIN nft_collections nc ON pn.contract_address = nc.contract_address;
+
+-- View: Forum Activity Summary
+-- Shows recent forum activity
+CREATE OR REPLACE VIEW forum_activity_summary AS
+SELECT 
+    fp.id,
+    fp.title,
+    fp.author_name,
+    fp.author_avatar,
+    fp.likes_count,
+    fp.created_at,
+    COUNT(fc.id) as comment_count,
+    COUNT(fl.id) as total_likes
+FROM forum_posts fp
+LEFT JOIN forum_comments fc ON fc.post_id = fp.id
+LEFT JOIN forum_likes fl ON fl.post_id = fp.id
+GROUP BY fp.id, fp.title, fp.author_name, fp.author_avatar, fp.likes_count, fp.created_at
+ORDER BY fp.created_at DESC;
+
+-- View: Specialist Availability
+-- Shows available specialists for consultations
+CREATE OR REPLACE VIEW specialist_availability AS
+SELECT 
+    ps.id,
+    ps.user_id,
+    ps.specialty,
+    ps.experience_years,
+    ps.qualification,
+    ps.bio,
+    ps.avatar_url,
+    ps.rating,
+    ps.consultation_fee,
+    u.email as user_email,
+    COUNT(sc.id) as active_consultations
+FROM plant_specialists ps
+JOIN auth.users u ON ps.user_id = u.id
+LEFT JOIN specialist_consultations sc ON ps.id = sc.specialist_id 
+    AND sc.status IN ('scheduled', 'in_progress')
+WHERE ps.is_available = true
+GROUP BY ps.id, ps.user_id, ps.specialty, ps.experience_years, ps.qualification, 
+         ps.bio, ps.avatar_url, ps.rating, ps.consultation_fee, u.email;
+
+-- ================================================================
+-- SAMPLE INSERT STATEMENTS FOR TESTING
+-- ================================================================
+
+-- Insert sample plant data (minimal version for testing)
+INSERT INTO plants (
+    species_name, common_name, plant_type
+) VALUES (
+    'Quercus robur', 'English Oak', 'Deciduous Tree'
+);
+
+-- NOTE: Sample forum post insertion commented out due to foreign key constraint
+-- To insert forum posts, you need to:
+-- 1. First create a user in the auth.users table
+-- 2. Create a corresponding profile in the profiles table
+-- 3. Then use the actual user_id for the forum post
+--
+-- INSERT INTO forum_posts (
+--     title, content, author_id, author_name, tags, likes_count
+-- ) VALUES (
+--     'Best practices for urban gardening',
+--     'I''ve been experimenting with urban gardening for the past year and wanted to share some insights...',
+--     'actual-user-id-here', 'John Doe',
+--     ARRAY['urban-gardening', 'care-tips'], 5
+-- );
+
+-- Insert sample weather data
+INSERT INTO weather_data (
+    location, current_temp_c, current_condition, current_wind_kph,
+    current_humidity, current_precip_mm, forecast_date, max_temp_c,
+    min_temp_c, forecast_condition, daily_chance_of_rain
+) VALUES (
+    'Nairobi, Kenya', 22.5, 'Partly Cloudy', 12.0, 65.0, 0.0,
+    CURRENT_DATE, 25.0, 18.0, 'Sunny', 20.0
+) ON CONFLICT DO NOTHING;
+
+-- Table 16: Plant Store Products
+-- Stores information about plants available for purchase in the store
+CREATE TABLE IF NOT EXISTS store_products (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL,
+    scientific_name TEXT NOT NULL,
+    description TEXT NOT NULL,
+    price_kes NUMERIC NOT NULL CHECK (price_kes > 0),
+    category TEXT NOT NULL CHECK (category IN ('indoor', 'outdoor', 'herbs', 'succulents', 'flowering', 'air-purifying')),
+    image_url TEXT,
+    
+    -- Care Requirements
+    care_level TEXT NOT NULL CHECK (care_level IN ('easy', 'moderate', 'difficult')),
+    sunlight_requirement TEXT NOT NULL CHECK (sunlight_requirement IN ('low', 'medium', 'high')),
+    water_requirement TEXT NOT NULL CHECK (water_requirement IN ('low', 'medium', 'high')),
+    height_m NUMERIC,
+    spread_m NUMERIC,
+    growth_rate TEXT NOT NULL CHECK (growth_rate IN ('slow', 'moderate', 'fast')),
+    
+    -- Benefits and Features
+    benefits TEXT[] DEFAULT '{}',
+    in_stock BOOLEAN DEFAULT true,
+    rating NUMERIC DEFAULT 0 CHECK (rating >= 0 AND rating <= 5),
+    review_count INTEGER DEFAULT 0,
+    
+    -- Inventory
+    stock_quantity INTEGER DEFAULT 0,
+    low_stock_threshold INTEGER DEFAULT 5,
+    is_featured BOOLEAN DEFAULT false,
+    is_new_arrival BOOLEAN DEFAULT false,
+    
+    -- SEO and Metadata
+    meta_title TEXT,
+    meta_description TEXT,
+    keywords TEXT[],
+    slug TEXT UNIQUE,
+    
+    -- User Association
+    user_id UUID REFERENCES auth.users(id),
+    
+    -- Timestamps
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    last_stock_updated TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS for store_products table
+ALTER TABLE store_products ENABLE ROW LEVEL SECURITY;
+
+-- Table 17: Shopping Cart Items
+-- Stores user's shopping cart items
+CREATE TABLE IF NOT EXISTS shopping_cart_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users(id) NOT NULL,
+    product_id UUID REFERENCES store_products(id) ON DELETE CASCADE NOT NULL,
+    quantity INTEGER NOT NULL DEFAULT 1 CHECK (quantity > 0),
+    unit_price NUMERIC NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    
+    -- Cart metadata
+    session_id TEXT,
+    is_active BOOLEAN DEFAULT true,
+    expires_at TIMESTAMPTZ
+);
+
+-- Enable RLS for shopping_cart_items table
+ALTER TABLE shopping_cart_items ENABLE ROW LEVEL SECURITY;
+
+-- Table 18: Orders
+-- Stores customer orders
+CREATE TABLE IF NOT EXISTS orders (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users(id) NOT NULL,
+    order_number TEXT UNIQUE NOT NULL,
+    status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded')),
+    total_amount NUMERIC NOT NULL,
+    currency TEXT DEFAULT 'KES',
+    payment_method TEXT,
+    payment_status TEXT DEFAULT 'pending' CHECK (payment_status IN ('pending', 'paid', 'failed', 'refunded')),
+    payment_transaction_id TEXT,
+    shipping_address JSONB,
+    billing_address JSONB,
+    shipping_method TEXT,
+    shipping_cost NUMERIC DEFAULT 0,
+    tax_amount NUMERIC DEFAULT 0,
+    notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS for orders table
+ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+
+-- Table 19: Order Items
+-- Stores individual items within orders
+CREATE TABLE IF NOT EXISTS order_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    order_id UUID REFERENCES orders(id) ON DELETE CASCADE NOT NULL,
+    product_id UUID REFERENCES store_products(id) ON DELETE CASCADE NOT NULL,
+    quantity INTEGER NOT NULL CHECK (quantity > 0),
+    unit_price NUMERIC NOT NULL,
+    total_price NUMERIC NOT NULL,
+    -- Product details at time of order (for historical tracking)
+    product_name TEXT NOT NULL,
+    product_image_url TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS for order_items table
+ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
+
+-- Table 20: Product Reviews
+-- Stores customer reviews for store products
+CREATE TABLE IF NOT EXISTS product_reviews (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    product_id UUID REFERENCES store_products(id) ON DELETE CASCADE NOT NULL,
+    user_id UUID REFERENCES auth.users(id) NOT NULL,
+    rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    review_title TEXT,
+    review_text TEXT,
+    is_verified_purchase BOOLEAN DEFAULT false,
+    is_approved BOOLEAN DEFAULT false,
+    helpful_count INTEGER DEFAULT 0,
+    review_images TEXT[],
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    
+    -- Prevent duplicate reviews from same user
+    UNIQUE(user_id, product_id)
+);
+
+-- Enable RLS for product_reviews table
+ALTER TABLE product_reviews ENABLE ROW LEVEL SECURITY;
+
+-- Table 21: Product Categories
+-- Stores plant store categories for better organization
+CREATE TABLE IF NOT EXISTS product_categories (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL UNIQUE,
+    description TEXT,
+    icon TEXT,
+    display_order INTEGER DEFAULT 0,
+    is_active BOOLEAN DEFAULT true,
+    parent_category_id UUID REFERENCES product_categories(id),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS for product_categories table
+ALTER TABLE product_categories ENABLE ROW LEVEL SECURITY;
+
+-- Table 22: Product Images
+-- Stores multiple images for products
+CREATE TABLE IF NOT EXISTS product_images (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    product_id UUID REFERENCES store_products(id) ON DELETE CASCADE NOT NULL,
+    image_url TEXT NOT NULL,
+    is_primary BOOLEAN DEFAULT false,
+    display_order INTEGER DEFAULT 0,
+    alt_text TEXT,
+    image_size_kb INTEGER,
+    image_width INTEGER,
+    image_height INTEGER,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS for product_images table
+ALTER TABLE product_images ENABLE ROW LEVEL SECURITY;
+
+-- Indexes for plant store tables
+CREATE INDEX IF NOT EXISTS idx_store_products_name ON store_products(name);
+CREATE INDEX IF NOT EXISTS idx_store_products_category ON store_products(category);
+CREATE INDEX IF NOT EXISTS idx_store_products_price ON store_products(price_kes);
+CREATE INDEX IF NOT EXISTS idx_store_products_care_level ON store_products(care_level);
+CREATE INDEX IF NOT EXISTS idx_store_products_in_stock ON store_products(in_stock);
+CREATE INDEX IF NOT EXISTS idx_store_products_rating ON store_products(rating);
+CREATE INDEX IF NOT EXISTS idx_store_products_featured ON store_products(is_featured);
+CREATE INDEX IF NOT EXISTS idx_store_products_new_arrival ON store_products(is_new_arrival);
+CREATE INDEX IF NOT EXISTS idx_shopping_cart_items_user_id ON shopping_cart_items(user_id);
+CREATE INDEX IF NOT EXISTS idx_shopping_cart_items_product_id ON shopping_cart_items(product_id);
+CREATE INDEX IF NOT EXISTS idx_shopping_cart_items_session_id ON shopping_cart_items(session_id);
+CREATE INDEX IF NOT EXISTS idx_shopping_cart_items_is_active ON shopping_cart_items(is_active);
+CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id);
+CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
+CREATE INDEX IF NOT EXISTS idx_orders_payment_status ON orders(payment_status);
+CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at);
+CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);
+CREATE INDEX IF NOT EXISTS idx_order_items_product_id ON order_items(product_id);
+CREATE INDEX IF NOT EXISTS idx_product_reviews_product_id ON product_reviews(product_id);
+CREATE INDEX IF NOT EXISTS idx_product_reviews_user_id ON product_reviews(user_id);
+CREATE INDEX IF NOT EXISTS idx_product_reviews_rating ON product_reviews(rating);
+CREATE INDEX IF NOT EXISTS idx_product_reviews_approved ON product_reviews(is_approved);
+CREATE INDEX IF NOT EXISTS idx_product_reviews_created_at ON product_reviews(created_at);
+CREATE INDEX IF NOT EXISTS idx_product_categories_parent_id ON product_categories(parent_category_id);
+CREATE INDEX IF NOT EXISTS idx_product_categories_display_order ON product_categories(display_order);
+CREATE INDEX IF NOT EXISTS idx_product_images_product_id ON product_images(product_id);
+CREATE INDEX IF NOT EXISTS idx_product_images_is_primary ON product_images(is_primary);
+CREATE INDEX IF NOT EXISTS idx_product_images_display_order ON product_images(display_order);
+
+-- Triggers for plant store tables
+DROP TRIGGER IF EXISTS handle_store_products_updated_at ON store_products;
+CREATE TRIGGER handle_store_products_updated_at
+    BEFORE UPDATE ON store_products
+    FOR EACH ROW
+    EXECUTE FUNCTION handle_updated_at();
+
+DROP TRIGGER IF EXISTS handle_shopping_cart_items_updated_at ON shopping_cart_items;
+CREATE TRIGGER handle_shopping_cart_items_updated_at
+    BEFORE UPDATE ON shopping_cart_items
+    FOR EACH ROW
+    EXECUTE FUNCTION handle_updated_at();
+
+DROP TRIGGER IF EXISTS handle_orders_updated_at ON orders;
+CREATE TRIGGER handle_orders_updated_at
+    BEFORE UPDATE ON orders
+    FOR EACH ROW
+    EXECUTE FUNCTION handle_updated_at();
+
+DROP TRIGGER IF EXISTS handle_product_reviews_updated_at ON product_reviews;
+CREATE TRIGGER handle_product_reviews_updated_at
+    BEFORE UPDATE ON product_reviews
+    FOR EACH ROW
+    EXECUTE FUNCTION handle_updated_at();
+
+DROP TRIGGER IF EXISTS handle_product_categories_updated_at ON product_categories;
+CREATE TRIGGER handle_product_categories_updated_at
+    BEFORE UPDATE ON product_categories
+    FOR EACH ROW
+    EXECUTE FUNCTION handle_updated_at();
+
+-- Views for plant store
+
+-- View: Featured Products
+CREATE OR REPLACE VIEW featured_products AS
+SELECT
+    sp.id,
+    sp.name,
+    sp.scientific_name,
+    sp.description,
+    sp.price_kes,
+    sp.category,
+    sp.image_url,
+    sp.rating,
+    sp.review_count,
+    sp.benefits,
+    sp.care_level,
+    sp.sunlight_requirement,
+    sp.water_requirement,
+    COUNT(pi.id) as image_count
+FROM store_products sp
+LEFT JOIN product_images pi ON sp.id = pi.product_id
+WHERE sp.is_featured = true AND sp.in_stock = true
+GROUP BY sp.id
+ORDER BY sp.rating DESC, sp.review_count DESC;
+
+-- View: New Arrivals
+CREATE OR REPLACE VIEW new_arrivals AS
+SELECT
+    sp.id,
+    sp.name,
+    sp.scientific_name,
+    sp.description,
+    sp.price_kes,
+    sp.category,
+    sp.image_url,
+    sp.rating,
+    sp.review_count,
+    sp.benefits,
+    sp.created_at
+FROM store_products sp
+WHERE sp.is_new_arrival = true AND sp.in_stock = true
+ORDER BY sp.created_at DESC
+LIMIT 12;
+
+-- View: Low Stock Alerts
+CREATE OR REPLACE VIEW low_stock_alerts AS
+SELECT
+    sp.id,
+    sp.name,
+    sp.category,
+    sp.stock_quantity,
+    sp.low_stock_threshold,
+    (sp.low_stock_threshold - sp.stock_quantity) as deficit,
+    sp.last_stock_updated
+FROM store_products sp
+WHERE sp.stock_quantity <= sp.low_stock_threshold AND sp.in_stock = true
+ORDER BY deficit DESC;
+
+-- View: Product Reviews Summary
+CREATE OR REPLACE VIEW product_reviews_summary AS
+SELECT
+    sp.id,
+    sp.name,
+    AVG(pr.rating) as average_rating,
+    COUNT(pr.id) as total_reviews,
+    COUNT(CASE WHEN pr.rating = 5 THEN 1 END) as five_star_reviews,
+    COUNT(CASE WHEN pr.rating = 4 THEN 1 END) as four_star_reviews,
+    COUNT(CASE WHEN pr.rating = 3 THEN 1 END) as three_star_reviews,
+    COUNT(CASE WHEN pr.rating = 2 THEN 1 END) as two_star_reviews,
+    COUNT(CASE WHEN pr.rating = 1 THEN 1 END) as one_star_reviews,
+    COUNT(pr.id) FILTER (WHERE pr.is_approved = true) as approved_reviews,
+    MAX(pr.created_at) as latest_review_date
+FROM store_products sp
+LEFT JOIN product_reviews pr ON sp.id = pr.product_id AND pr.is_approved = true
+GROUP BY sp.id, sp.name;
+
+-- Insert sample categories
+INSERT INTO product_categories (name, description, icon, display_order) VALUES
+('indoor', 'Perfect for homes and offices', '🏠', 1),
+('outdoor', 'Great for gardens and patios', '🌳', 2),
+('herbs', 'Grow your own food and spices', '🌿', 3),
+('succulents', 'Low maintenance beauties', '🌵', 4),
+('flowering', 'Add color to your space', '🌸', 5),
+('air-purifying', 'Improve your indoor air quality', '💨', 6);
+
+-- Additional RLS policies for plant store tables
+-- These policies ensure users can only interact with their own data
+
+-- Shopping Cart RLS Policies
+DROP POLICY IF EXISTS "Users can view their own cart items" ON shopping_cart_items;
+CREATE POLICY "Users can view their own cart items" ON shopping_cart_items
+    FOR SELECT USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can insert their own cart items" ON shopping_cart_items;
+CREATE POLICY "Users can insert their own cart items" ON shopping_cart_items
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can update their own cart items" ON shopping_cart_items;
+CREATE POLICY "Users can update their own cart items" ON shopping_cart_items
+    FOR UPDATE USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can delete their own cart items" ON shopping_cart_items;
+CREATE POLICY "Users can delete their own cart items" ON shopping_cart_items
+    FOR DELETE USING (auth.uid() = user_id);
+
+-- Orders RLS Policies
+DROP POLICY IF EXISTS "Users can view their own orders" ON orders;
+CREATE POLICY "Users can view their own orders" ON orders
+    FOR SELECT USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can insert their own orders" ON orders;
+CREATE POLICY "Users can insert their own orders" ON orders
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can update their own orders" ON orders;
+CREATE POLICY "Users can update their own orders" ON orders
+    FOR UPDATE USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can delete their own orders" ON orders;
+CREATE POLICY "Users can delete their own orders" ON orders
+    FOR DELETE USING (auth.uid() = user_id);
+
+-- Order Items RLS Policies
+DROP POLICY IF EXISTS "Users can view their own order items" ON order_items;
+CREATE POLICY "Users can view their own order items" ON order_items
+    FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM orders
+            WHERE orders.id = order_items.order_id
+            AND orders.user_id = auth.uid()
+        )
+    );
+
+-- Product Reviews RLS Policies
+DROP POLICY IF EXISTS "Users can view product reviews" ON product_reviews;
+CREATE POLICY "Users can view product reviews" ON product_reviews
+    FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Users can insert their own product reviews" ON product_reviews;
+CREATE POLICY "Users can insert their own product reviews" ON product_reviews
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can update their own product reviews" ON product_reviews;
+CREATE POLICY "Users can update their own product reviews" ON product_reviews
+    FOR UPDATE USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can delete their own product reviews" ON product_reviews;
+CREATE POLICY "Users can delete their own product reviews" ON product_reviews
+    FOR DELETE USING (auth.uid() = user_id);
+
+-- Store Products RLS Policies (for admin users)
+DROP POLICY IF EXISTS "Admins can view all products" ON store_products;
+CREATE POLICY "Admins can view all products" ON store_products
+    FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Admins can insert products" ON store_products;
+CREATE Policy "Admins can insert products" ON store_products
+    FOR INSERT WITH CHECK (auth.uid() = current_setting('app.admin_user_id', true)::uuid);
+
+-- Additional view for product recommendations based on user preferences
+CREATE OR REPLACE VIEW recommended_products AS
+SELECT
+    sp.id,
+    sp.name,
+    sp.scientific_name,
+    sp.description,
+    sp.price_kes,
+    sp.category,
+    sp.image_url,
+    sp.rating,
+    sp.review_count,
+    sp.benefits,
+    sp.care_level,
+    sp.sunlight_requirement,
+    sp.water_requirement,
+    -- Calculate a recommendation score based on various factors
+    (sp.rating * 0.4) +
+    (sp.review_count / 100.0 * 0.2) +
+    (CASE WHEN sp.is_featured THEN 0.3 ELSE 0 END) +
+    (CASE WHEN sp.is_new_arrival THEN 0.1 ELSE 0 END) as recommendation_score
+FROM store_products sp
+WHERE sp.in_stock = true
+ORDER BY recommendation_score DESC, sp.rating DESC, sp.review_count DESC
+LIMIT 20;
+
+-- Insert sample store products (matching the 12 plants from data/plants.ts)
+INSERT INTO store_products (
+    name, scientific_name, description, price_kes, category, care_level,
+    sunlight_requirement, water_requirement, height_m, spread_m, growth_rate,
+    benefits, in_stock, rating, review_count, is_featured, is_new_arrival
+) VALUES
+-- Snake Plant
+('Snake Plant', 'Sansevieria trifasciata', 'Low maintenance air purifying plant perfect for beginners. Produces oxygen at night and removes common indoor toxins.', 2599.00, 'indoor', 'easy', 'low', 'low', 0.6, 0.4, 'slow', ARRAY['Air purifying', 'Low maintenance', 'Pet friendly'], true, 4.5, 128, true, false),
+-- Monstera Deliciosa
+('Monstera Deliciosa', 'Monstera deliciosa', 'Tropical beauty with distinctive split leaves. Creates a dramatic statement in any indoor space.', 4599.00, 'indoor', 'moderate', 'medium', 'medium', 2.0, 1.2, 'moderate', ARRAY['Statement piece', 'Air purifying', 'Easy propagation'], true, 4.7, 256, true, false),
+-- Rosemary
+('Rosemary', 'Rosmarinus officinalis', 'Aromatic herb perfect for cooking and landscaping. Drought-tolerant perennial with medicinal properties.', 1299.00, 'herbs', 'easy', 'high', 'low', 1.2, 0.8, 'moderate', ARRAY['Culinary uses', 'Medicinal properties', 'Drought tolerant'], true, 4.3, 89, false, true),
+-- Jade Plant
+('Jade Plant', 'Crassula ovata', 'Easy-care succulent with coin-shaped leaves. Symbolizes good luck and prosperity.', 1899.00, 'succulents', 'easy', 'high', 'low', 0.8, 0.6, 'slow', ARRAY['Low maintenance', 'Long-lived', 'Good luck symbol'], true, 4.4, 167, true, false),
+-- Peace Lily
+('Peace Lily', 'Spathiphyllum wallisii', 'Beautiful flowering plant that thrives in low light. Excellent air purifier for bedrooms.', 3299.00, 'indoor', 'easy', 'low', 'medium', 0.9, 0.6, 'moderate', ARRAY['Air purifying', 'Flowers indoors', 'Low light tolerant'], true, 4.6, 203, false, false),
+-- Lavender
+('Lavender', 'Lavandula angustifolia', 'Aromatic purple flowers perfect for gardens. Attracts pollinators and has calming properties.', 1599.00, 'outdoor', 'easy', 'high', 'low', 0.6, 0.6, 'moderate', ARRAY['Aromatic', 'Attracts pollinators', 'Medicinal uses'], true, 4.8, 145, true, true),
+-- ZZ Plant
+('ZZ Plant', 'Zamioculcas zamiifolia', 'Extremely drought-tolerant with glossy leaves. Perfect for busy plant owners and low light conditions.', 2899.00, 'indoor', 'easy', 'low', 'low', 2.0, 2.0, 'slow', ARRAY['Drought tolerant', 'Low maintenance', 'Air purifying'], true, 4.5, 98, true, false),
+-- Basil
+('Basil', 'Ocimum basilicum', 'Popular culinary herb with fresh, sweet flavor. Easy to grow and perfect for kitchen gardens.', 1099.00, 'herbs', 'easy', 'high', 'medium', 1.0, 1.0, 'fast', ARRAY['Culinary staple', 'Easy to grow', 'Attracts bees'], true, 4.2, 76, false, false),
+-- Spider Plant
+('Spider Plant', 'Chlorophytum comosum', 'Fast-growing plant with spider-like plantlets. Excellent air purifier and very forgiving for beginners.', 1699.00, 'indoor', 'easy', 'medium', 'medium', 1.0, 1.0, 'fast', ARRAY['Air purifying', 'Easy propagation', 'Pet friendly'], true, 4.4, 189, false, false),
+-- Echeveria
+('Echeveria', 'Echeveria elegans', 'Beautiful rosette-forming succulent. Perfect for dish gardens and drought-tolerant landscapes.', 1499.00, 'succulents', 'easy', 'high', 'low', 0.15, 0.15, 'slow', ARRAY['Low maintenance', 'Beautiful rosettes', 'Easy propagation'], false, 4.6, 92, false, false),
+-- Orchid
+('Orchid', 'Phalaenopsis spp.', 'Elegant flowering plant with long-lasting blooms. Adds sophistication to any indoor space.', 3599.00, 'flowering', 'moderate', 'medium', 'low', 1.0, 1.0, 'slow', ARRAY['Long-lasting flowers', 'Elegant appearance', 'Gift-worthy'], true, 4.7, 234, true, false),
+-- Pothos
+('Pothos', 'Epipremnum aureum', 'Trailing vine with heart-shaped leaves. Excellent air purifier that thrives in various light conditions.', 1999.00, 'indoor', 'easy', 'low', 'medium', 2.0, 1.0, 'fast', ARRAY['Air purifying', 'Easy care', 'Versatile placement'], true, 4.5, 278, false, false)
+ON CONFLICT (name) DO NOTHING;
+
+-- Insert sample product images for featured products
+INSERT INTO product_images (product_id, image_url, is_primary, display_order, alt_text, image_size_kb) VALUES
+-- Snake Plant images
+((SELECT id FROM store_products WHERE name = 'Snake Plant'), '/images/snake-plant-main.jpg', true, 1, 'Snake Plant in decorative pot', 450),
+((SELECT id FROM store_products WHERE name = 'Snake Plant'), '/images/snake-plant-detail.jpg', false, 2, 'Close-up of Snake Plant leaves', 380),
+
+-- Monstera Deliciosa images
+((SELECT id FROM store_products WHERE name = 'Monstera Deliciosa'), '/images/monstera-main.jpg', true, 1, 'Monstera Deliciosa with split leaves', 520),
+((SELECT id FROM store_products WHERE name = 'Monstera Deliciosa'), '/images/monstera-roots.jpg', false, 2, 'Monstera aerial roots detail', 410),
+
+-- Jade Plant images
+((SELECT id FROM store_products WHERE name = 'Jade Plant'), '/images/jade-plant-main.jpg', true, 1, 'Jade Plant in ceramic pot', 380),
+((SELECT id FROM store_products WHERE name = 'Jade Plant'), '/images/jade-plant-closeup.jpg', false, 2, 'Close-up of Jade Plant leaves', 340),
+
+-- Peace Lily images
+((SELECT id FROM store_products WHERE name = 'Peace Lily'), '/images/peace-lily-main.jpg', true, 1, 'Peace Lily with white flowers', 420),
+((SELECT id FROM store_products WHERE name = 'Peace Lily'), '/images/peace-lily-bloom.jpg', false, 2, 'Peace Lily in full bloom', 390),
+
+-- Orchid images
+((SELECT id FROM store_products WHERE name = 'Orchid'), '/images/orchid-main.jpg', true, 1, 'White Orchid flower', 480),
+((SELECT id FROM store_products WHERE name = 'Orchid'), '/images/orchid-plant.jpg', false, 2, 'Orchid plant with multiple blooms', 450)
+
+ON CONFLICT DO NOTHING;
+
+-- Insert sample product reviews for popular products
+INSERT INTO product_reviews (product_id, user_id, rating, review_title, review_text, is_approved, is_verified_purchase, helpful_count) VALUES
+-- Snake Plant reviews
+((SELECT id FROM store_products WHERE name = 'Snake Plant'), 'user-1', 5, 'Perfect for beginners!', 'This plant is incredibly easy to care for and has thrived in my low-light apartment. Highly recommend!', true, true, 24),
+((SELECT id FROM store_products WHERE name = 'Snake Plant'), 'user-2', 4, 'Great air purifier', 'I''ve noticed the air quality in my bedroom has improved since getting this plant. Very low maintenance!', true, true, 18),
+
+-- Monstera Deliciosa reviews
+((SELECT id FROM store_products WHERE name = 'Monstera Deliciosa'), 'user-3', 5, 'Stunning plant!', 'The split leaves are so unique and beautiful. My plant has grown so much in just a few months!', true, true, 32),
+((SELECT id FROM store_products WHERE name = 'Monstera Deliciosa'), 'user-4', 4, 'Worth the investment', 'A bit more care than other plants but absolutely worth it for the visual impact!', true, true, 15),
+
+-- Pothos reviews
+((SELECT id FROM store_products WHERE name = 'Pothos'), 'user-5', 5, 'Almost killed it multiple times and it still thrives!', 'This plant is practically indestructible. Perfect for people who forget to water!', true, true, 28),
+((SELECT id FROM store_products WHERE name = 'Pothos'), 'user-6', 4, 'Great for hanging baskets', 'My pothos has cascaded beautifully from its hanging basket. Easy to propagate too!', true, true, 12)
+
+ON CONFLICT (user_id, product_id) DO NOTHING;
+
+-- ================================================================
+-- END OF FILE
+-- ================================================================

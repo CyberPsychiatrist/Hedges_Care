@@ -565,6 +565,38 @@ CREATE TABLE IF NOT EXISTS store_products (
     last_stock_updated TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Add slug generation function
+CREATE OR REPLACE FUNCTION generate_slug(text_input TEXT)
+RETURNS TEXT AS $$
+BEGIN
+    -- Convert to lowercase, replace spaces with hyphens, remove special characters
+    RETURN LOWER(
+        REGEXP_REPLACE(
+            REGEXP_REPLACE(
+                REGEXP_REPLACE(
+                    REGEXP_REPLACE(
+                        REGEXP_REPLACE(
+                            REGEXP_REPLACE(
+                                text_input,
+                                '[^\w\s-]', '', 'g'
+                            ),
+                            '\s+', '-', 'g'
+                        ),
+                        '-+', '-', 'g'
+                    ),
+                    '^-|-$', '', 'g'
+                ),
+                '--+', '-', 'g'
+            ),
+            '[^a-z0-9-]', '', 'g'
+        )
+    );
+END;
+$$ LANGUAGE plpgsql;
+
+-- Add unique constraint for slug
+ALTER TABLE store_products ADD CONSTRAINT store_products_slug_unique UNIQUE (slug);
+
 -- Enable RLS for store_products table
 ALTER TABLE store_products ENABLE ROW LEVEL SECURITY;
 
@@ -964,8 +996,7 @@ INSERT INTO store_products (
 -- Orchid
 ('Orchid', 'Phalaenopsis spp.', 'Elegant flowering plant with long-lasting blooms. Adds sophistication to any indoor space.', 3599.00, 'flowering', 'moderate', 'medium', 'low', 1.0, 1.0, 'slow', ARRAY['Long-lasting flowers', 'Elegant appearance', 'Gift-worthy'], true, 4.7, 234, true, false),
 -- Pothos
-('Pothos', 'Epipremnum aureum', 'Trailing vine with heart-shaped leaves. Excellent air purifier that thrives in various light conditions.', 1999.00, 'indoor', 'easy', 'low', 'medium', 2.0, 1.0, 'fast', ARRAY['Air purifying', 'Easy care', 'Versatile placement'], true, 4.5, 278, false, false)
-ON CONFLICT (name) DO NOTHING;
+('Pothos', 'Epipremnum aureum', 'Trailing vine with heart-shaped leaves. Excellent air purifier that thrives in various light conditions.', 1999.00, 'indoor', 'easy', 'low', 'medium', 2.0, 1.0, 'fast', ARRAY['Air purifying', 'Easy care', 'Versatile placement'], true, 4.5, 278, false, false);
 
 -- Insert sample product images for featured products
 INSERT INTO product_images (product_id, image_url, is_primary, display_order, alt_text, image_size_kb) VALUES

@@ -261,53 +261,6 @@ Run the schema queries from [`database_schema_queries.txt`](database_schema_quer
 
 ---
 
-## 🗄️ Database Schema
-
-The Hedges Care platform uses a PostgreSQL database with Supabase, supporting plant health tracking, e-commerce, and community features.
-
-### Core Tables
-
-**Plant & Environmental**
-- `plants` - Species data with CO2 metrics
-- `scan_history` - AI diagnosis results
-- `weather_data` - Local weather for care recommendations
-
-**E-commerce (Plant Store)**
-- `store_products` - Plants with pricing and care details
-- `shopping_cart_items` - User cart storage
-- `orders` - Complete order information
-- `order_items` - Individual order items
-- `product_reviews` - Customer reviews with images
-- `product_categories` - Plant categories
-- `product_images` - Multiple product images
-
-**Community & Social**
-- `forum_posts` - Community discussions
-- `forum_comments` - Post comments
-- `forum_likes` - User engagement
-
-**NFT & Blockchain**
-- `plant_nfts` - Minted plant NFTs
-- `nft_collections` - NFT collection data
-- `plant_timeline` - User plant history
-
-**Professional Services**
-- `plant_specialists` - Landscaping professionals
-- `specialist_consultations` - Booked sessions
-
-### Database Features
-
-- **Row Level Security (RLS)** - Data isolation per user
-- **Automatic Timestamps** - Managed by triggers
-- **Performance Indexing** - Optimized queries
-- **Sample Data** - 12 plant varieties included
-
-### Setup
-
-Run the schema queries from [`database_schema_queries.txt`](database_schema_queries.txt:1) to create all tables, indexes, triggers, and sample data.
-
----
-
 ## 🧾 Feature vs Benefit Table
 
 | 🛠️ Feature | 📈 Description | 🎯 Benefit |

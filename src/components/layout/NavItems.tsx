@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Camera, History, MessageSquare, BookOpen, Users, Video, Info,
-  Plane, Bug, HandHeart, ChevronDown, Settings, MoreHorizontal, Calendar, Wallet
+  Plane, Bug, HandHeart, ChevronDown, Settings, MoreHorizontal, Calendar, Wallet,
+  ShoppingCart
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -22,23 +23,26 @@ interface NavItemsProps {
 
 // Primary navigation items (always visible)
 export const primaryNavItems = [
-  { 
-    name: "Scan", 
-    path: "/scan", 
+  {
+    name: "Expert Chat",
+    path: "/specialist-chat",
+    icon: <MessageSquare className="h-4 w-4 mr-1" />,
+    authRequired: true
+  }
+];
+
+// Tools navigation items (under dropdown)
+export const toolsNavItems = [
+  {
+    name: "Scan",
+    path: "/scan",
     icon: <Camera className="h-4 w-4 mr-1" />,
     authRequired: true
   },
-  { 
-    name: "History", 
-    path: "/history", 
+  {
+    name: "History",
+    path: "/history",
     icon: <History className="h-4 w-4 mr-1" />,
-    authRequired: true
-  },
-
-  { 
-    name: "Expert Chat", 
-    path: "/specialist-chat", 
-    icon: <MessageSquare className="h-4 w-4 mr-1" />,
     authRequired: true
   }
 ];
@@ -97,13 +101,41 @@ export const nftNavItems = [
   }
 ];
 
+// E-commerce Navigation items
+export const ecommerceNavItems = [
+  {
+    name: "Plant Store",
+    path: "/plant-store",
+    icon: <ShoppingCart className="h-4 w-4 mr-1" />,
+    authRequired: false
+  }
+];
+
+// Marketplace navigation items
+export const marketplaceNavItems = [
+  {
+    name: "NFT Gallery",
+    path: "/nft-gallery",
+    icon: <Wallet className="h-4 w-4 mr-1" />,
+    authRequired: false
+  },
+  {
+    name: "Plant Store",
+    path: "/plant-store",
+    icon: <ShoppingCart className="h-4 w-4 mr-1" />,
+    authRequired: false
+  }
+];
+
 // All navigation items for mobile
-export const allNavItems = [...primaryNavItems, ...learningNavItems, ...advancedNavItems, ...nftNavItems];
+export const allNavItems = [...toolsNavItems, ...primaryNavItems, ...learningNavItems, ...advancedNavItems, ...marketplaceNavItems];
 
 const NavItems: React.FC<NavItemsProps> = ({ activeTab, setActiveTab, isMobile = false, closeMenu }) => {
   const navigate = useNavigate();
   const [isLearningOpen, setIsLearningOpen] = useState(false);
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
+  const [isToolsOpen, setIsToolsOpen] = useState(false);
+  const [isMarketplaceOpen, setIsMarketplaceOpen] = useState(false);
   
   const handleNavigation = (path: string, tabName: string) => {
     navigate(path);
@@ -152,6 +184,39 @@ const NavItems: React.FC<NavItemsProps> = ({ activeTab, setActiveTab, isMobile =
   // Desktop view - organized dropdowns
   return (
     <div className="flex items-center gap-2">
+      {/* Tools Dropdown */}
+      <DropdownMenu open={isToolsOpen} onOpenChange={setIsToolsOpen}>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            size="sm"
+            className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 ${
+              toolsNavItems.some(item => isActive(item.name, item.path))
+                ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md"
+                : "text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800"
+            }`}
+          >
+            <Camera className="h-4 w-4" />
+            <span>Tools</span>
+            <ChevronDown className="h-3 w-3" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="w-52 glass-morphism shadow-xl border border-emerald-200/50">
+          {toolsNavItems.map((item) => (
+            <DropdownMenuItem
+              key={item.name}
+              onClick={() => handleNavigation(item.path, item.name)}
+              className="cursor-pointer transition-all duration-200 hover:bg-emerald-50 text-emerald-700 font-medium"
+            >
+              <div className="flex items-center space-x-3">
+                {item.icon}
+                <span>{item.name}</span>
+              </div>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+
       {/* Primary Navigation */}
       {primaryNavItems.map((item) => (
         <Button
@@ -203,6 +268,39 @@ const NavItems: React.FC<NavItemsProps> = ({ activeTab, setActiveTab, isMobile =
         </DropdownMenuContent>
       </DropdownMenu>
 
+      {/* Marketplace Dropdown */}
+      <DropdownMenu open={isMarketplaceOpen} onOpenChange={setIsMarketplaceOpen}>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            size="sm"
+            className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 ${
+              marketplaceNavItems.some(item => isActive(item.name, item.path))
+                ? "bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-md"
+                : "text-purple-700 hover:bg-purple-50 hover:text-purple-800"
+            }`}
+          >
+            <Wallet className="h-4 w-4" />
+            <span>Marketplace</span>
+            <ChevronDown className="h-3 w-3" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="w-52 glass-morphism shadow-xl border border-purple-200/50">
+          {marketplaceNavItems.map((item) => (
+            <DropdownMenuItem
+              key={item.name}
+              onClick={() => handleNavigation(item.path, item.name)}
+              className="cursor-pointer transition-all duration-200 hover:bg-purple-50 text-purple-700 font-medium"
+            >
+              <div className="flex items-center space-x-3">
+                {item.icon}
+                <span>{item.name}</span>
+              </div>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+
       {/* Advanced Tools Dropdown */}
       <DropdownMenu open={isAdvancedOpen} onOpenChange={setIsAdvancedOpen}>
         <DropdownMenuTrigger asChild>
@@ -233,22 +331,6 @@ const NavItems: React.FC<NavItemsProps> = ({ activeTab, setActiveTab, isMobile =
               </div>
             </DropdownMenuItem>
           ))}
-          <DropdownMenuItem className="border-t border-sapphire-200/50 pt-2">
-            <div className="w-full flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                {nftNavItems[0].icon}
-                <span className="font-medium text-amber-700">{nftNavItems[0].name}</span>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                className="premium-border-amber text-amber-700 hover:bg-amber-50"
-                onClick={() => handleNavigation(nftNavItems[0].path, nftNavItems[0].name)}
-              >
-                View
-              </Button>
-            </div>
-          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

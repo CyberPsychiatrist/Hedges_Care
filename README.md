@@ -204,319 +204,48 @@ function calculateCO2Absorption(plant: PlantCO2Data): {
 
 ## 🗄️ Database Schema
 
-### Overview
+The Hedges Care platform uses a PostgreSQL database with Supabase, supporting plant health tracking, e-commerce, and community features.
 
-The Hedges Care platform uses a comprehensive PostgreSQL database schema with Supabase for backend services. The database is designed to support plant health tracking, e-commerce functionality, environmental impact measurement, and community features.
+### Core Tables
 
-### Schema Diagram
+**Plant & Environmental**
+- `plants` - Species data with CO2 metrics
+- `scan_history` - AI diagnosis results
+- `weather_data` - Local weather for care recommendations
 
-```mermaid
-erDiagram
-    %% Core User Tables
-    auth.users ||--o{ profiles : ""
-    auth.users ||--o{ plant_nfts : ""
-    auth.users ||--o{ shopping_cart_items : ""
-    auth.users ||--o{ orders : ""
-    auth.users ||--o{ specialist_consultations : ""
-    auth.users ||--o{ mpesa_transactions : ""
-    auth.users ||--o{ scan_history : ""
-    auth.users ||--o{ forum_posts : ""
-    auth.users ||--o{ forum_comments : ""
-    auth.users ||--o{ forum_likes : ""
-    auth.users ||--o{ product_reviews : ""
-    
-    profiles {
-        uuid id PK "FK: auth.users(id)"
-        text username
-        text full_name
-        text avatar_url
-        timestamptz created_at
-        timestamptz updated_at
-    }
-    
-    %% Plant & Environmental Data
-    plants ||--o{ scan_history : ""
-    plants ||--o{ plant_nfts : ""
-    
-    plants {
-        uuid id PK
-        text species_name
-        text common_name
-        text plant_type
-        text description
-        numeric height_m
-        numeric canopy_m2
-        numeric carbon_storage_kg
-        numeric annual_CO2_kg
-        text[]
-        environmental_benefits
-        timestamptz created_at
-        timestamptz updated_at
-    }
-    
-    %% Plant Store E-commerce
-    store_products ||--o{ shopping_cart_items : ""
-    store_products ||--o{ order_items : ""
-    store_products ||--o{ product_reviews : ""
-    store_products ||--o{ product_images : ""
-    
-    store_products {
-        uuid id PK
-        text name
-        text scientific_name
-        text description
-        numeric price_kes
-        text category
-        text care_level
-        text sunlight_requirement
-        text water_requirement
-        text[] benefits
-        boolean in_stock
-        numeric rating
-        integer review_count
-        boolean is_featured
-        boolean is_new_arrival
-        uuid user_id "FK: auth.users(id)"
-        timestamptz created_at
-        timestamptz updated_at
-    }
-    
-    shopping_cart_items {
-        uuid id PK
-        uuid user_id FK
-        uuid product_id FK
-        integer quantity
-        numeric unit_price
-        text session_id
-        boolean is_active
-        timestamptz expires_at
-    }
-    
-    orders {
-        uuid id PK
-        uuid user_id FK
-        text order_number UK
-        text status
-        numeric total_amount
-        text currency
-        text payment_status
-        text payment_transaction_id
-        jsonb shipping_address
-        jsonb billing_address
-        numeric shipping_cost
-        numeric tax_amount
-        timestamptz created_at
-        timestamptz updated_at
-    }
-    
-    order_items {
-        uuid id PK
-        uuid order_id FK
-        uuid product_id FK
-        integer quantity
-        numeric unit_price
-        numeric total_price
-        text product_name
-        text product_image_url
-    }
-    
-    %% Community & Social
-    forum_posts ||--o{ forum_comments : ""
-    forum_posts ||--o{ forum_likes : ""
-    
-    forum_posts {
-        uuid id PK
-        text title
-        text content
-        uuid author_id FK
-        text author_name
-        text[] tags
-        integer likes_count
-        timestamptz created_at
-        timestamptz updated_at
-    }
-    
-    forum_comments {
-        uuid id PK
-        uuid post_id FK
-        uuid author_id FK
-        text author_name
-        text content
-        integer likes_count
-        timestamptz created_at
-        timestamptz updated_at
-    }
-    
-    %% NFT & Blockchain
-    nft_collections ||--o{ plant_nfts : ""
-    plant_nfts ||--o{ nft_listings : ""
-    plant_nfts ||--o{ plant_timeline : ""
-    
-    plant_nfts {
-        uuid id PK
-        text token_id UK
-        text name
-        text description
-        text image_url
-        text species_name
-        text common_name
-        text plant_type
-        numeric co2_absorbed_annual
-        numeric co2_absorbed_daily
-        text rarity
-        text owner_address
-        text creator_address
-        text status
-        uuid user_id FK
-        timestamptz mint_date
-    }
-    
-    %% Professional Services
-    plant_specialists ||--o{ specialist_consultations : ""
-    
-    plant_specialists {
-        uuid id PK
-        uuid user_id UK
-        text specialty
-        integer experience_years
-        text qualification
-        text bio
-        numeric rating
-        numeric consultation_fee
-        boolean is_available
-    }
-    
-    specialist_consultations {
-        uuid id PK
-        uuid user_id FK
-        uuid specialist_id FK
-        uuid plant_nft_id FK
-        text status
-        timestamptz scheduled_at
-        integer duration_minutes
-        timestamptz created_at
-        timestamptz updated_at
-    }
-    
-    %% Support Tables
-    product_categories {
-        uuid id PK
-        text name UK
-        text description
-        text icon
-        integer display_order
-        uuid parent_category_id FK
-    }
-    
-    product_images {
-        uuid id PK
-        uuid product_id FK
-        text image_url
-        boolean is_primary
-        integer display_order
-        text alt_text
-        integer image_size_kb
-    }
-    
-    product_reviews {
-        uuid id PK
-        uuid product_id FK
-        uuid user_id FK
-        integer rating
-        text review_title
-        text review_text
-        boolean is_verified_purchase
-        boolean is_approved
-        integer helpful_count
-        text[] review_images
-        timestamptz created_at
-        timestamptz updated_at
-    }
-    
-    %% Weather & External Data
-    weather_data {
-        uuid id PK
-        text location
-        numeric current_temp_c
-        text current_condition
-        numeric daily_chance_of_rain
-        timestamptz forecast_date
-    }
-    
-    %% Payment
-    mpesa_transactions {
-        uuid id PK
-        uuid user_id FK
-        text phone_number
-        numeric amount
-        text currency
-        text reference_number UK
-        text status
-        timestamptz transaction_date
-        timestamptz created_at
-        timestamptz updated_at
-    }
-```
+**E-commerce (Plant Store)**
+- `store_products` - Plants with pricing and care details
+- `shopping_cart_items` - User cart storage
+- `orders` - Complete order information
+- `order_items` - Individual order items
+- `product_reviews` - Customer reviews with images
+- `product_categories` - Plant categories
+- `product_images` - Multiple product images
 
-### Key Database Components
+**Community & Social**
+- `forum_posts` - Community discussions
+- `forum_comments` - Post comments
+- `forum_likes` - User engagement
 
-#### 🌱 **Plant & Environmental Data**
-- **`plants`** - Core plant species data with environmental metrics
-- **`scan_history`** - User plant scan results and AI diagnoses
-- **`weather_data`** - Localized weather information for care recommendations
+**NFT & Blockchain**
+- `plant_nfts` - Minted plant NFTs
+- `nft_collections` - NFT collection data
+- `plant_timeline` - User plant history
 
-#### 🛒 **E-commerce (Plant Store)**
-- **`store_products`** - Available plants with care details and pricing
-- **`shopping_cart_items`** - User temporary cart storage
-- **`orders`** - Complete order information with shipping and payment details
-- **`order_items`** - Individual items within orders for historical tracking
-- **`product_reviews`** - Customer reviews with images and verification
-- **`product_categories`** - Organized plant categories with hierarchy support
-- **`product_images`** - Multiple product images with metadata
-
-#### 🏷️ **NFT & Blockchain Features**
-- **`plant_nfts`** - Minted plant NFTs with environmental impact data
-- **`nft_collections`** - NFT collection information
-- **`nft_listings`** - Marketplace listings for trading
-- **`plant_timeline`** - User plant care history and NFT lifecycle
-
-#### 👥 **Community & Social Features**
-- **`forum_posts`** - Community discussions and knowledge sharing
-- **`forum_comments`** - Post comments and engagement
-- **`forum_likes`** - User engagement tracking
-
-#### 👨‍🔬 **Professional Services**
-- **`plant_specialists`** - Certified landscaping professionals
-- **`specialist_consultations`** - Booked sessions and calls
-
-#### 💳 **Payment Processing**
-- **`mpesa_transactions`** - M-Pesa payment integration for African markets
+**Professional Services**
+- `plant_specialists` - Landscaping professionals
+- `specialist_consultations` - Booked sessions
 
 ### Database Features
 
-- **Row Level Security (RLS)** - Users can only access their own data
-- **Automatic Timestamps** - Created/updated fields managed by triggers
-- **Comprehensive Indexing** - Optimized queries for performance
-- **Views for Common Queries** - Simplified data access patterns
-- **Sample Data** - Pre-populated with 12 plant varieties and test data
+- **Row Level Security (RLS)** - Data isolation per user
+- **Automatic Timestamps** - Managed by triggers
+- **Performance Indexing** - Optimized queries
+- **Sample Data** - 12 plant varieties included
 
-### Database Setup
+### Setup
 
-To set up the database:
-
-1. Run the schema queries from [`database_schema_queries.txt`](database_schema_queries.txt:1)
-2. The file contains all table creation, indexes, triggers, and sample data
-3. RLS policies are automatically applied for security
-4. Views are created for common data access patterns
-
-### Plant Store Data Model
-
-The plant store uses a comprehensive data model supporting:
-- **Product Management** - Plants with detailed care requirements
-- **Inventory** - Stock tracking and low stock alerts
-- **Reviews & Ratings** - Customer feedback with image support
-- **Categories** - Hierarchical organization system
-- **SEO** - Metadata and slug generation
+Run the schema queries from [`database_schema_queries.txt`](database_schema_queries.txt:1) to create all tables, indexes, triggers, and sample data.
 
 ---
 
